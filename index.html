@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>IRIS | Infrared Reflective Interface System — Next-Gen Assistive Wearable</title>
+  
+  <!-- SEO & Social Meta Tags -->
+  <meta name="description" content="Project IRIS: A hands-free infrared & inertial cursor interface for patients with ALS, Locked-In Syndrome & severe motor paralysis. Built for ₹885 — 99.96% cheaper than ₹25L commercial systems.">
+  <meta name="keywords" content="Project IRIS, eye tracking, assistive technology, ALS, locked-in syndrome, open source hardware, Ayushman Choudhary, ESP32C3, MPU6050">
+  <meta name="author" content="Ayushman Choudhary">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Cache Control: Force instant live updates in browser -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css?t=1792620000">
+</head>
+<body>
+
+  <!-- Fullscreen Preloader -->
+  <div id="preloader" class="preloader">
+    <div class="preloader-content">
+      <div class="preloader-iris-eye">
+        <div class="eye-ring-outer"></div>
+        <div class="eye-ring-inner"></div>
+        <div class="eye-pupil"></div>
+        <div class="eye-scan-beam"></div>
+      </div>
+      <div class="preloader-title">PROJECT IRIS</div>
+      <div class="preloader-subtitle">Infrared Reflective Interface System</div>
+      <div class="preloader-progress-track">
+        <div id="preloader-bar" class="preloader-progress-bar"></div>
+      </div>
+      <div id="preloader-text" class="preloader-status">Buffering 3D motion frames... 0%</div>
+    </div>
+  </div>
+
+  <!-- Global Floating Controls: SFX Audio & Settings Hub -->
+  <div class="global-floating-controls">
+    <button id="sfx-toggle" class="glass-pill-btn sfx-btn" title="Toggle tactile sound effects" aria-label="Toggle sound">
+      <span class="icon" id="sfx-icon">🔊</span>
+      <span class="label">SFX On</span>
+    </button>
+    <button id="floating-settings-btn" class="glass-pill-btn settings-quick-btn" title="Open Universal Settings Hub" aria-label="Open Settings">
+      <span class="icon">⚙️</span>
+      <span class="label">Settings</span>
+    </button>
+  </div>
+
+  <!-- Sticky Glassmorphic Header -->
+  <header class="site-header" id="header">
+    <div class="header-container">
+      <a href="#hero-intro" class="brand-logo" aria-label="Project IRIS Home">
+        <div class="brand-symbol">
+          <svg viewBox="0 0 40 40" class="iris-vector-logo" aria-hidden="true">
+            <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"/>
+            <ellipse cx="20" cy="20" rx="14" ry="8" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="20" cy="20" r="5" fill="currentColor"/>
+            <circle cx="20" cy="20" r="2" fill="var(--bg-primary)"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">IRIS</span>
+          <span class="brand-tag">OPEN HARDWARE</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="nav-menu" aria-label="Primary Navigation">
+        <a href="#hero-intro" class="nav-link active">3D Motion</a>
+        <a href="#zoom-tour-marker" class="nav-link">Zoom Tour</a>
+        <a href="#blink-lab" class="nav-link">Blink &amp; LED</a>
+        <a href="#arcade-section" class="nav-link">Flight Sim &amp; Games</a>
+        <a href="#companion-app" class="nav-link">Universal App &amp; AI</a>
+        <a href="#calibration-wizard" class="nav-link">Calibration</a>
+        <a href="#disruption-matrix" class="nav-link">Tobii vs IRIS</a>
+        <a href="#verified-benchmarks" class="nav-link">Empirical Data</a>
+        <a href="#code-studio" class="nav-link">Code Studio</a>
+        <a href="#mission" class="nav-link">UN SDGs</a>
+      </nav>
+
+      <!-- Action Group -->
+      <div class="header-actions">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="theme-switch-btn" aria-label="Switch between light and dark mode">
+          <span class="theme-icon light-icon" aria-hidden="true">☀️</span>
+          <span class="theme-icon dark-icon" aria-hidden="true">🌙</span>
+          <span class="theme-label" id="theme-label-text">Dark</span>
+        </button>
+
+        <a href="#get-involved" class="cta-pill-button primary-cta">
+          <span>Get Involved</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+
+        <!-- Mobile Menu Hamburger -->
+        <button id="mobile-menu-btn" class="mobile-hamburger" aria-label="Toggle navigation menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile-drawer" class="mobile-nav-drawer" aria-hidden="true">
+      <a href="#hero-intro" class="mobile-nav-link">3D Motion Experience</a>
+      <a href="#zoom-tour-marker" class="mobile-nav-link">Scroll Component Zoom Tour</a>
+      <a href="#blink-lab" class="mobile-nav-link">Blink &amp; Belt LED Telemetry</a>
+      <a href="#arcade-section" class="mobile-nav-link">360° Cockpit Flight Sim &amp; Games</a>
+      <a href="#companion-app" class="mobile-nav-link">Universal Companion App &amp; AI</a>
+      <a href="#calibration-wizard" class="mobile-nav-link">Calibration Wizard</a>
+      <a href="#disruption-matrix" class="mobile-nav-link">Tobii vs IRIS Disruption</a>
+      <a href="#verified-benchmarks" class="mobile-nav-link">Verified Empirical Benchmarks</a>
+      <a href="#code-studio" class="mobile-nav-link">Firmware &amp; Python Code</a>
+      <a href="#mission" class="mobile-nav-link">UN Sustainable Development Goals</a>
+      <a href="#get-involved" class="mobile-nav-link highlight">Support Open Mission</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- SECTION 1 & 2: CONTINUOUS SCROLL EXPERIENCE: PURE 3D SCRUBBING -> SEAMLESS LAST-FRAME COMPONENT ZOOM TOUR -->
+    <section class="master-scrolly-container" id="hero-intro">
+      
+      <!-- Top Introduction Header (Fades away naturally as scroll starts) -->
+      <div class="hero-top-intro" id="hero-top-intro">
+        <div class="hero-chip">
+          <span class="chip-pulse"></span>
+          <span>PROJECT IRIS · WEARABLE ARCHITECTURE</span>
+        </div>
+        <h1 class="hero-main-title">
+          Trapped inside a conscious mind.<br>
+          <span class="gradient-text">Unlocked by an ₹885 breakthrough.</span>
+        </h1>
+        <p class="hero-main-subtitle">
+          Commercial eye-trackers cost over <strong>₹25,00,000</strong>. IRIS combines 950nm optical reflectance and 6-DOF inertial steering into an open-source wearable built for ₹885 — 99.96% cheaper.
+        </p>
+
+        <!-- Cornerstone Ground-Truth Numbers from PPTX Slides 5, 9, 38 & 61 -->
+        <div class="hero-metrics-strip">
+          <div class="hero-metric-item">
+            <span class="metric-big-num">₹885</span>
+            <span class="metric-sub-label">Total Build Cost (99.96% Cheaper)</span>
+          </div>
+          <div class="hero-metric-divider"></div>
+          <div class="hero-metric-item">
+            <span class="metric-big-num">240K+</span>
+            <span class="metric-sub-label">Paralyzed Indians in Need (Census 2011)</span>
+          </div>
+          <div class="hero-metric-divider"></div>
+          <div class="hero-metric-item">
+            <span class="metric-big-num">18.2s</span>
+            <span class="metric-sub-label">Caregiver SOS Response (87.2% Faster)</span>
+          </div>
+          <div class="hero-metric-divider"></div>
+          <div class="hero-metric-item">
+            <span class="metric-big-num">2–3s</span>
+            <span class="metric-sub-label">First-Run Auto-Calibration (Zero Clinic)</span>
+          </div>
+        </div>
+
+        <div class="hero-scroll-cue">
+          <span class="mouse-icon">
+            <span class="mouse-wheel"></span>
+          </span>
+          <span class="cue-text">Scroll to initiate 3D transformation &amp; microscopic component zoom</span>
+        </div>
+      </div>
+
+      <!-- Sticky Viewport Window for 3D Canvas + Camera Zoom -->
+      <div class="canvas-sticky-container" id="canvas-sticky">
+        
+        <!-- Ambient Radial Glow -->
+        <div class="ambient-glow" id="ambient-glow"></div>
+
+        <!-- Big Background Watermark behind the 3D model -->
+        <div class="watermark-layer" id="watermark-text" aria-hidden="true">IRIS</div>
+
+        <!-- The 3D Animation Canvas (Scrubbed solely by scroll, then dynamically camera-zoomed into components) -->
+        <div class="canvas-zoom-wrapper" id="canvas-zoom-wrapper">
+          <canvas id="motion-canvas" class="motion-canvas" width="1280" height="720"></canvas>
+          
+          <!-- Dynamic Camera Focus Reticle on Active Component -->
+          <div class="camera-target-reticle" id="camera-reticle">
+            <div class="reticle-corner top-left"></div>
+            <div class="reticle-corner top-right"></div>
+            <div class="reticle-corner bottom-left"></div>
+            <div class="reticle-corner bottom-right"></div>
+            <div class="reticle-center-dot"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Scrolly Pacing Runway & Story Zoom Cards -->
+      <div class="master-story-track">
+        
+        <!-- Phase 1: Pure 3D Scrub Runway (Clean screen, NO text cards during rotation!) -->
+        <div class="scrub-runway-spacer" id="scrub-phase"></div>
+
+        <div id="zoom-tour-marker"></div>
+
+        <!-- Phase 2: Microscopic Component Zoom Journey (Pins on the final frame & zooms into each part line by line!) -->
+        <div class="zoom-steps-container">
+
+          <!-- Step 1: Complete Blueprint Overview -->
+          <div class="zoom-scroll-step" data-step="overview">
+            <div class="zoom-step-card glass-card">
+              <div class="step-card-badge">EXPLODED BLUEPRINT · SLIDE 55</div>
+              <div class="step-card-price">₹885 TOTAL BOM</div>
+              <h3 class="step-card-title">Complete Modular Teardown</h3>
+              <p class="step-card-desc">
+                The product has separated into its core sub-assemblies. As you scroll down, the camera zooms microscopically into each component, detailing its function, engineering rationale, and verified ₹885 open-hardware BOM.
+              </p>
+              <div class="step-card-footer">
+                <span>↓ Continue scrolling to inspect components</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: XIAO ESP32-C3 -->
+          <div class="zoom-scroll-step" data-step="xiao">
+            <div class="zoom-step-card glass-card">
+              <div class="step-card-badge">CORE MICROCONTROLLER</div>
+              <div class="step-card-price">₹500 BOM</div>
+              <h3 class="step-card-title">Seeed Studio XIAO ESP32C3</h3>
+              <p class="step-card-desc">
+                <strong>Function:</strong> The telemetry brain. Runs the real-time gesture loop, samples MPU6050 angles at 50Hz, and streams gesture tokens over BLE 5.0 with automatic Wi-Fi failover.
+              </p>
+              <ul class="step-specs-list">
+                <li><strong>Architecture:</strong> RISC-V 32-bit @ 160MHz</li>
+                <li><strong>Wireless:</strong> BLE 5.0 + 802.11 b/g/n Wi-Fi failover</li>
+                <li><strong>Why This Choice:</strong> Thumb-sized footprint with built-in CC/CV Li-Po charge regulator via BAT+/BAT- pads. Eliminates external buck modules and prevents scalp heating.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 3: MPU6050 Motion Sensor -->
+          <div class="zoom-scroll-step" data-step="imu">
+            <div class="zoom-step-card glass-card">
+              <div class="step-card-badge">INERTIAL MOTION ENGINE</div>
+              <div class="step-card-price">₹100 BOM</div>
+              <h3 class="step-card-title">MPU6050 6-DOF Sensor</h3>
+              <p class="step-card-desc">
+                <strong>Function:</strong> Reads head pitch (nod up/down) and head roll (tilt left/right) at 50Hz, translating subtle movements into fluid cursor steering.
+              </p>
+              <ul class="step-specs-list">
+                <li><strong>Sensor:</strong> 3-axis Gyroscope + 3-axis Accelerometer</li>
+                <li><strong>Bus Speed:</strong> Fast-mode I2C @ 400kHz · 25° dead-zone filter</li>
+                <li><strong>Why This Choice:</strong> Prevents ocular strain caused by camera-only gaze trackers. A long deliberate blink acts as an ergonomic clutch to re-zero the horizon.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 4: 950nm IR Optical Sensor -->
+          <div class="zoom-scroll-step" data-step="ir">
+            <div class="zoom-step-card glass-card">
+              <div class="step-card-badge">OPTICAL REFLECTANCE</div>
+              <div class="step-card-price">₹30 BOM</div>
+              <h3 class="step-card-title">950nm Multi-Beam IR Module</h3>
+              <p class="step-card-desc">
+                <strong>Function:</strong> Emits safe, diffused 950nm infrared light. When the eye is open, the sclera reflects strongly; when closed, the eyelid blocks light.
+              </p>
+              <ul class="step-specs-list">
+                <li><strong>Safety Rating:</strong> IEC 62471 Exempt (&lt;0.5 mW/cm² - 20× below limit)</li>
+                <li><strong>Detection Mode:</strong> LM393 analog comparator with digitalRead output</li>
+                <li><strong>Why This Choice:</strong> Hardware comparator determines eye open/close in analog silicon, freeing MCU compute for deterministic cursor streaming.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 5: Neodymium Magnets & Eyewear Pivot -->
+          <div class="zoom-scroll-step" data-step="magnets">
+            <div class="zoom-step-card glass-card">
+              <div class="step-card-badge">MODULAR RIG MOUNT</div>
+              <div class="step-card-price">₹20 BOM</div>
+              <h3 class="step-card-title">Neodymium Magnet + Nut-Bolt Pivot + RGB LED</h3>
+              <p class="step-card-desc">
+                <strong>Function:</strong> Separates eyewear and headband. Wear everyday glasses first, strap headband second, and snap the sensor on via N52 neodymium magnet.
+              </p>
+              <ul class="step-specs-list">
+                <li><strong>Rx Compatibility:</strong> Fits custom frames &amp; up to ±7.0D prescription lenses</li>
+                <li><strong>Adjustment:</strong> Friction pivot adjusts beam angle without bending wires</li>
+                <li><strong>Why This Choice:</strong> Commercial camera trackers fail on glasses due to lens glare. The IRIS magnetic pivot positions beams below glare lines.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 6: 3.7V Li-Po Battery -->
+          <div class="zoom-scroll-step" data-step="battery">
+            <div class="zoom-step-card glass-card">
+              <div class="step-card-badge">POWER MANAGEMENT</div>
+              <div class="step-card-price">₹80 BOM</div>
+              <h3 class="step-card-title">3.7V 1000mAh Li-Po &amp; Power Switch</h3>
+              <p class="step-card-desc">
+                <strong>Function:</strong> Delivers over 12 hours of continuous active tracking using ESP32 Deep Sleep. Direct charge via XIAO BAT+/BAT- pads.
+              </p>
+              <ul class="step-specs-list">
+                <li><strong>Runtime:</strong> 12+ hours with automated deep sleep</li>
+                <li><strong>Circuit Protection:</strong> 2A fast-blow fuse + reverse polarity diode</li>
+                <li><strong>Why This Choice:</strong> Direct solder pads eliminate bulky battery shields, keeping total rig weight under 58 grams for bedridden patients.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 7: Ventilated Velcro Headband -->
+          <div class="zoom-scroll-step" data-step="headband">
+            <div class="zoom-step-card glass-card">
+              <div class="step-card-badge">ERGONOMIC HOUSING</div>
+              <div class="step-card-price">₹130 BOM</div>
+              <h3 class="step-card-title">Ventilated Airflow Velcro Headband</h3>
+              <p class="step-card-desc">
+                <strong>Function:</strong> Breathable perforated mesh band houses the electronics while maintaining continuous airflow across the scalp.
+              </p>
+              <ul class="step-specs-list">
+                <li><strong>Comfort:</strong> Zero buckles, soft Velcro closure, anti-sweat mesh</li>
+                <li><strong>Wires &amp; 2A Fuse:</strong> ₹25 passives (Total BOM: ₹885)</li>
+                <li><strong>Why This Choice:</strong> Heavy plastic helmets cause pressure sores on paralyzed patients. The perforated Velcro strap ensures all-day medical comfort.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SECTION 3: THE INTERACTIVE BLINK & DIGITAL TWIN LAB (WITH LIVE WEB SPEECH API) -->
+    <section class="section-container" id="blink-lab">
+      <div class="section-header-center">
+        <div class="section-eyebrow">INTERACTIVE BROWSER EXPERIMENT</div>
+        <h2 class="section-title">The IRIS Blink &amp; Gesture Lab</h2>
+        <p class="section-subtitle">
+          Test the exact timing window and neural denoising logic used in the IRIS Python firmware. 
+          When you click or blink to select a tile, <strong>the browser speaks aloud using real Web Speech synthesis</strong>!
+        </p>
+      </div>
+
+      <div class="blink-lab-workspace glass-panel">
+        
+        <!-- Left: Interactive Eye Simulation Canvas & Oscilloscope -->
+        <div class="lab-col-simulator">
+          <div class="lab-viewport-card">
+            
+            <div class="viewport-hud-header">
+              <span class="hud-title">REAL-TIME DIGITAL TWIN · 950nm SENSING</span>
+              <span class="hud-status-badge" id="lab-connection-status">LINK ACTIVE</span>
+            </div>
+
+            <!-- Virtual Eye Digital Twin Graphic -->
+            <div class="virtual-eye-container" id="eye-container">
+              <svg viewBox="0 0 320 180" class="virtual-eye-svg" id="eye-svg" aria-label="Digital Eye Twin">
+                <defs>
+                  <radialGradient id="irisGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#00f2fe"/>
+                    <stop offset="60%" stop-color="#0072ff"/>
+                    <stop offset="100%" stop-color="#031024"/>
+                  </radialGradient>
+                  <linearGradient id="scleraGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#f8fafc"/>
+                    <stop offset="100%" stop-color="#cbd5e1"/>
+                  </linearGradient>
+                </defs>
+                
+                <!-- Eye Outline (Sclera) -->
+                <path id="eye-sclera" d="M 20 90 Q 160 10 300 90 Q 160 170 20 90 Z" fill="url(#scleraGrad)" stroke="#475569" stroke-width="2"/>
+                
+                <!-- Iris -->
+                <circle id="eye-iris" cx="160" cy="90" r="42" fill="url(#irisGrad)"/>
+                
+                <!-- Pupil -->
+                <circle id="eye-pupil" cx="160" cy="90" r="20" fill="#050508"/>
+                <circle cx="152" cy="82" r="5" fill="#ffffff" opacity="0.8"/>
+                
+                <!-- Eyelid Path (Closes downwards) -->
+                <path id="eyelid-top" d="M 18 90 Q 160 12 302 90 Q 160 14 18 90 Z" fill="#0d1117" stroke="#334155" stroke-width="2"/>
+              </svg>
+              
+              <div class="ir-beam-overlay" id="ir-beam"></div>
+            </div>
+
+            <!-- Live Optical Wave Oscilloscope -->
+            <div class="oscilloscope-card">
+              <div class="oscilloscope-meta">
+                <span>950nm Sclera Reflectance Waveform</span>
+                <span id="ir-voltage-readout">Reflectance: 94.2%</span>
+              </div>
+              <canvas id="oscilloscope-canvas" width="460" height="90"></canvas>
+            </div>
+
+            <!-- Blink Simulation Trigger Controls (Slide 33 Timing Gate) -->
+            <div class="blink-action-bar">
+              <button id="btn-quick-blink" class="lab-btn secondary">
+                <span>Quick Natural Blink</span>
+                <small>(&lt; 200ms · Ignored)</small>
+              </button>
+              <button id="btn-hold-blink" class="lab-btn primary">
+                <span id="hold-blink-text">Press &amp; Hold for Deliberate Blink</span>
+                <small>(200–500ms · Left Click)</small>
+              </button>
+              <button id="btn-double-blink" class="lab-btn secondary">
+                <span>Double Blink</span>
+                <small>(2× in &lt;600ms · Right Click)</small>
+              </button>
+            </div>
+
+            <div class="keyboard-hint">
+              <span>💡 Keyboard Shortcut: Press or Hold the <strong>SPACEBAR</strong> to test deliberate blinks.</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: Real-time Signal Processor & Virtual Cursor Companion -->
+        <div class="lab-col-diagnostics">
+          
+          <!-- Denoising Verdict Terminal -->
+          <div class="verdict-display-card">
+            <div class="verdict-label">TENSORFLOW NOISE FILTER VERDICT</div>
+            <div class="verdict-main" id="verdict-text">Waiting for blink event...</div>
+            <div class="verdict-time" id="verdict-time">Hold duration: 0 ms</div>
+          </div>
+
+          <!-- Virtual Head-Tilt Steered Companion App Simulator -->
+          <div class="virtual-screen-card">
+            <div class="virtual-screen-header">
+              <span>IRIS TILE INTERFACE · MOUSE = HEAD TILT</span>
+              <div class="speech-toggle-group">
+                <span class="speech-status-icon">🗣️</span>
+                <span class="speech-status-text">Web Speech: ACTIVE</span>
+              </div>
+            </div>
+            
+            <div class="virtual-desktop" id="virtual-desktop">
+              
+              <!-- Virtual Cursor -->
+              <div class="virtual-cursor" id="virtual-cursor">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 4L11 20L14 13L21 10L4 4Z" fill="var(--accent-iris)" stroke="#ffffff" stroke-width="2"/>
+                </svg>
+              </div>
+
+              <!-- 4 Accessible Assistive Tiles -->
+              <div class="accessible-tiles-grid">
+                
+                <button class="assist-tile" data-action="WATER" id="tile-water">
+                  <div class="tile-icon">💧</div>
+                  <div class="tile-name">WATER</div>
+                  <div class="tile-hint">Blink to Speak Aloud</div>
+                </button>
+
+                <button class="assist-tile" data-action="REST" id="tile-rest">
+                  <div class="tile-icon">🛏️</div>
+                  <div class="tile-name">REST / TURN</div>
+                  <div class="tile-hint">Blink to Request</div>
+                </button>
+
+                <button class="assist-tile emergency-tile" data-action="SOS" id="tile-sos">
+                  <div class="tile-icon">🚨</div>
+                  <div class="tile-name">EMERGENCY SOS</div>
+                  <div class="tile-hint">Direct Siren Alarm</div>
+                </button>
+
+                <button class="assist-tile" data-action="LIGHT" id="tile-light">
+                  <div class="tile-icon" id="room-lamp-icon">💡</div>
+                  <div class="tile-name" id="room-lamp-text">ROOM LIGHT</div>
+                  <div class="tile-hint">IoT Wi-Fi Relay</div>
+                </button>
+
+              </div>
+
+              <!-- Interactive Feedback Banner -->
+              <div class="action-alert-banner" id="action-banner">
+                <span id="banner-text">Move mouse inside desktop to tilt head. Click or hold Space to select.</span>
+              </div>
+
+            </div>
+
+            <!-- Caretaker Notification Simulation Pipeline -->
+            <div class="pipeline-status-box">
+              <div class="pipeline-step active">
+                <span class="step-num">1</span>
+                <span>Blink Captured</span>
+              </div>
+              <div class="pipeline-arrow">→</div>
+              <div class="pipeline-step" id="pipe-step-2">
+                <span class="step-num">2</span>
+                <span>BLE / Wi-Fi Proxy</span>
+              </div>
+              <div class="pipeline-arrow">→</div>
+              <div class="pipeline-step" id="pipe-step-3">
+                <span class="step-num">3</span>
+                <span>ntfy.sh Alert Sent (145ms)</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Belt Status RGB LED Telemetry Simulator (Slide 30) -->
+      <div class="belt-telemetry-card glass-panel" style="margin-top: 28px;">
+        <div class="belt-telemetry-header">
+          <div class="belt-title-group">
+            <span class="section-eyebrow">HARDWARE TELEMETRY · SLIDE 30</span>
+            <h3 class="belt-card-title">Belt Status RGB LED Simulator</h3>
+            <p class="belt-card-desc">
+              "One LED tells you everything." A single high-intensity RGB LED on the breathable Velcro headband gives caregivers instant visual feedback across the ward — zero screen needed.
+            </p>
+          </div>
+          <div class="belt-chip">Seeed Studio XIAO ESP32C3 GPIO</div>
+        </div>
+
+        <div class="belt-sim-layout">
+          <!-- Visual Belt Unit Graphic -->
+          <div class="belt-unit-graphic">
+            <div class="belt-strap-mesh"></div>
+            <div class="belt-pod-housing">
+              <div class="belt-pod-label">IRIS · HEADBAND CONTROLLER</div>
+              <div class="belt-led-fixture">
+                <div class="belt-rgb-led-glow" id="belt-led-glow"></div>
+                <div class="belt-rgb-led-bulb" id="belt-led-bulb"></div>
+              </div>
+              <div class="belt-led-status-readout" id="belt-led-status-text">CONNECTED · SOLID YELLOW</div>
+            </div>
+            <div class="belt-strap-mesh"></div>
+          </div>
+
+          <!-- 4 State Interactive Selector Buttons -->
+          <div class="belt-states-grid">
+            <button class="belt-state-btn" data-state="boot" id="btn-led-boot">
+              <span class="led-state-dot dot-green"></span>
+              <div class="btn-text-col">
+                <span class="btn-state-name">System Boot-Up</span>
+                <span class="btn-state-sub">Solid Green (2s) · IMU &amp; IR Init</span>
+              </div>
+            </button>
+
+            <button class="belt-state-btn" data-state="advertising" id="btn-led-adv">
+              <span class="led-state-dot dot-blue"></span>
+              <div class="btn-text-col">
+                <span class="btn-state-name">Searching for Device</span>
+                <span class="btn-state-sub">Pulsing Blue (2Hz) · BLE 5.0 Broadcast</span>
+              </div>
+            </button>
+
+            <button class="belt-state-btn active" data-state="connected" id="btn-led-conn">
+              <span class="led-state-dot dot-yellow"></span>
+              <div class="btn-text-col">
+                <span class="btn-state-name">Telemetry Connected</span>
+                <span class="btn-state-sub">Solid Yellow · Live Eye Twin Locked</span>
+              </div>
+            </button>
+
+            <button class="belt-state-btn" data-state="sos" id="btn-led-sos">
+              <span class="led-state-dot dot-red"></span>
+              <div class="btn-text-col">
+                <span class="btn-state-name">SOS Emergency Alarm</span>
+                <span class="btn-state-sub">Strobe Red · Caretaker Buzzed</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SECTION 4: 360° COCKPIT FLIGHT SIMULATOR HUD & PLAYABLE GAZE ARCADE (SLIDES 13 & 42) -->
+    <section class="section-container" id="arcade-section">
+      <div id="dino-game-section"></div>
+      <div class="section-header-center">
+        <div class="section-eyebrow">DIGITAL THERAPEUTICS, REHAB &amp; PLAY · SLIDES 13 &amp; 42</div>
+        <h2 class="section-title">360° Cockpit Flight Simulator HUD &amp; Gaze Arcade</h2>
+        <p class="section-subtitle">
+          Slide 13: Bedridden patients suffer severe sensory deprivation and motor fatigue. 
+          IRIS restores joy with gaze therapeutics. <strong>Move your mouse to steer yaw &amp; pitch, and click or blink to lock onto aerial targets!</strong>
+        </p>
+      </div>
+
+      <div class="arcade-workspace glass-panel">
+        
+        <!-- Mode Switcher Tabs -->
+        <div class="arcade-tabs-bar">
+          <button class="arcade-tab-btn active" id="tab-flight-sim" data-target="flight-sim-panel">
+            <span class="tab-icon">✈️</span>
+            <span>360° Cockpit Flight Simulator</span>
+            <span class="tab-badge">Gaze &amp; Tilt Steered HUD</span>
+          </button>
+          <button class="arcade-tab-btn" id="tab-dino-jump" data-target="dino-jump-panel">
+            <span class="tab-icon">🦖</span>
+            <span>Cyber Dino Jump</span>
+            <span class="tab-badge">Blink Saccade Reaction</span>
+          </button>
+        </div>
+
+        <!-- Panel 1: 360° Cockpit Flight Simulator HUD -->
+        <div class="arcade-panel active" id="flight-sim-panel">
+          
+          <div class="flight-viewport-container" id="flight-viewport">
+            <!-- 60 FPS Hardware Accelerated Canvas -->
+            <canvas id="cockpit-canvas" width="840" height="360" class="cockpit-canvas"></canvas>
+
+            <!-- Real-Time Flight Instrumentation Overlay -->
+            <div class="cockpit-hud-overlay">
+              
+              <!-- Top Compass Tape -->
+              <div class="hud-compass-tape">
+                <span class="compass-marker">060</span>
+                <span class="compass-marker">·</span>
+                <span class="compass-heading-val" id="hud-heading">084° E</span>
+                <span class="compass-marker">·</span>
+                <span class="compass-marker">100</span>
+              </div>
+
+              <!-- Left Airspeed Tape -->
+              <div class="hud-tape-box hud-left">
+                <div class="tape-title">AIRSPEED</div>
+                <div class="tape-val-row"><span id="hud-airspeed">142</span> <small>KTS</small></div>
+                <div class="tape-scale-indicator">▲ CRUISE</div>
+              </div>
+
+              <!-- Right Altitude Tape -->
+              <div class="hud-tape-box hud-right">
+                <div class="tape-title">ALTITUDE</div>
+                <div class="tape-val-row"><span id="hud-altitude">4,200</span> <small>FT</small></div>
+                <div class="tape-scale-indicator">▲ BARO</div>
+              </div>
+
+              <!-- Center Target Reticle & Gaze Lock -->
+              <div class="hud-target-reticle" id="flight-target-box">
+                <div class="reticle-corner corner-tl"></div>
+                <div class="reticle-corner corner-tr"></div>
+                <div class="reticle-corner corner-bl"></div>
+                <div class="reticle-corner corner-br"></div>
+                <div class="target-center-pip"></div>
+                <div class="target-lock-label" id="target-lock-status">GAZE LOCK: TRACKING SKY TARGET</div>
+              </div>
+
+              <!-- Bottom Status Bar -->
+              <div class="hud-bottom-telemetry">
+                <div class="hud-stat-pill">
+                  <span class="stat-live-dot"></span>
+                  <span>CANVAS 60 FPS · HARDWARE ACCEL</span>
+                </div>
+                <div class="hud-stat-pill">
+                  <span>IMU PITCH/ROLL: LINKED</span>
+                </div>
+                <div class="hud-stat-pill">
+                  <span>BLINK: LOCK TARGET / LEVEL WINGS</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="flight-controls-hint">
+            <span>🎮 <strong>Controls:</strong> Move cursor inside cockpit to steer head yaw &amp; pitch. Click or Blink to fire lock-on and auto-level horizon!</span>
+            <button id="btn-recenter-flight" class="lab-btn secondary">Level Horizon 🎯</button>
+          </div>
+
+        </div>
+
+        <!-- Panel 2: Playable Dino Jump -->
+        <div class="arcade-panel" id="dino-jump-panel" style="display: none;">
+          <div class="dino-canvas-container">
+            <canvas id="dino-canvas" width="840" height="260" class="dino-canvas"></canvas>
+
+            <div class="game-hud-overlay">
+              <div class="score-display">
+                <span class="score-label">SCORE:</span>
+                <span id="game-score" class="score-val">0000</span>
+                <span class="hi-score-label">HI:</span>
+                <span id="game-hi-score" class="hi-score-val">0000</span>
+              </div>
+              
+              <div class="game-over-modal" id="game-over-modal">
+                <div class="game-over-title">SESSION COMPLETE!</div>
+                <p id="game-over-msg">Ocular saccadic reaction time calibrated.</p>
+                <button id="btn-restart-game" class="lab-btn primary">
+                  <span>Play Again ↺</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="dino-controls-bar">
+            <button id="btn-game-jump" class="game-jump-btn">
+              <span class="btn-icon">👁️</span>
+              <span>Blink / Tap to Jump (Spacebar)</span>
+            </button>
+            <div class="game-meta-hint">
+              <span>Calibrates saccadic reaction times and superior rectus ocular elevation</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 5: THE UNIVERSAL COMPANION APP, GEMINI AI SPEECH & CAREGIVER DISPATCHER (SLIDES 14, 16, 17, 36 & 38) -->
+    <section class="section-container" id="companion-app">
+      <div class="section-header-center">
+        <div class="section-eyebrow">UNIVERSAL COMPANION APP · SLIDES 14, 16, 17, 36 &amp; 38</div>
+        <h2 class="section-title">The Universal Companion App &amp; Gemini AI Speech</h2>
+        <p class="section-subtitle">
+          Streamlined around 4 high-contrast core tiles plus a master Settings Hub. 
+          Patients with severe motor fatigue can type brief telegraphic intent, and <strong>Google Gemini AI expands it into natural, articulate speech in English and Hindi</strong>.
+        </p>
+      </div>
+
+      <div class="companion-system-grid">
+        
+        <!-- Left: Core High-Contrast Assistive Tiles -->
+        <div class="companion-tiles-card glass-panel">
+          <div class="card-header-flex">
+            <div>
+              <span class="card-eyebrow">CORE SCREEN TILES · SLIDE 14</span>
+              <h3 class="card-title-main">Assistive Care &amp; IoT Control</h3>
+            </div>
+            <span class="hud-status-badge">HIGH CONTRAST UI</span>
+          </div>
+          <p class="card-desc-text">
+            Designed for motor impairment: high-contrast target zones with single deliberate blink clicks and sub-300ms emergency dispatch.
+          </p>
+
+          <div class="app-tiles-matrix">
+            <button class="app-main-tile" data-action="WATER" id="app-tile-water">
+              <span class="tile-icon-bubble">💧</span>
+              <span class="tile-title-text">WATER</span>
+              <span class="tile-sub-text">Speak Hydration Request</span>
+            </button>
+
+            <button class="app-main-tile" data-action="REST" id="app-tile-rest">
+              <span class="tile-icon-bubble">🛏️</span>
+              <span class="tile-title-text">REST / TURN</span>
+              <span class="tile-sub-text">Adjust Bed Position</span>
+            </button>
+
+            <button class="app-main-tile emergency" data-action="SOS" id="app-tile-sos">
+              <span class="tile-icon-bubble">🚨</span>
+              <span class="tile-title-text">EMERGENCY SOS</span>
+              <span class="tile-sub-text">1-Blink Caregiver Siren</span>
+            </button>
+
+            <button class="app-main-tile" data-action="LIGHT" id="app-tile-light">
+              <span class="tile-icon-bubble" id="tile-iot-lamp-icon">💡</span>
+              <span class="tile-title-text" id="tile-iot-lamp-text">ROOM LIGHT</span>
+              <span class="tile-sub-text">Wi-Fi Smart Relay</span>
+            </button>
+
+            <button class="app-main-tile settings-hub-tile" data-action="SETTINGS" id="app-tile-settings">
+              <span class="tile-icon-bubble">⚙️</span>
+              <span class="tile-title-text">SETTINGS HUB</span>
+              <span class="tile-sub-text">5 Sub-Menus (Slide 17)</span>
+            </button>
+          </div>
+
+          <!-- Live Verbal / Action Feedback Log -->
+          <div class="app-feedback-bar" id="companion-feedback-bar">
+            <span id="companion-feedback-text">Ready. Click any tile or use the Gemini AI expander to vocalize.</span>
+          </div>
+        </div>
+
+        <!-- Right: Gemini AI Telegraphic-to-Articulate Speech Expander (Slide 36) -->
+        <div class="gemini-expander-card glass-panel">
+          <div class="gemini-card-header">
+            <div class="gemini-title-badge">
+              <span class="gemini-sparkle-icon">✨</span>
+              <div>
+                <h3 class="gemini-card-title">Gemini AI Telegraphic-to-Speech Expander</h3>
+                <span class="gemini-card-sub">Telegraphic In → Articulate Voice Out (Slide 36)</span>
+              </div>
+            </div>
+            <span class="gemini-model-chip">Multimodal LLM</span>
+          </div>
+
+          <div class="gemini-card-body">
+            <!-- Preset Quick-Chips -->
+            <div class="telegraphic-selector-group">
+              <label class="selector-label">SELECT TELEGRAPHIC INTENT OR TYPE CUSTOM:</label>
+              <div class="chips-flex-row">
+                <button class="tele-chip-btn active" data-intent="pain / left shoulder / sharp">pain / left shoulder / sharp</button>
+                <button class="tele-chip-btn" data-intent="water / cold / thirsty">water / cold / thirsty</button>
+                <button class="tele-chip-btn" data-intent="breath / heavy / fan">breath / heavy / fan</button>
+                <button class="tele-chip-btn" data-intent="medicine / head / 2pm">medicine / head / 2pm</button>
+                <button class="tele-chip-btn" data-intent="family / call / video">family / call / video</button>
+              </div>
+
+              <div class="input-action-row">
+                <input type="text" id="tele-custom-input" class="tele-input-field" value="pain / left shoulder / sharp" placeholder="Enter telegraphic intent...">
+                <button id="btn-run-gemini" class="gemini-trigger-btn">
+                  <span>⚡ Expand Intent</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Gemini Expanded Articulate Sentences -->
+            <div class="gemini-result-container">
+              <div class="result-header-row">
+                <span class="lang-tag">ENGLISH EXPANSION:</span>
+                <span class="ai-confidence-pill">99.4% Intent Confidence</span>
+              </div>
+              <div class="expanded-sentence-box" id="gemini-en-output">
+                "I am experiencing a sharp pain in my left shoulder; could you please help me readjust my position and check my pillows?"
+              </div>
+
+              <div class="result-header-row" style="margin-top: 14px;">
+                <span class="lang-tag">HINDI CLINICAL TRANSLATION (हिंदी):</span>
+              </div>
+              <div class="expanded-sentence-box hindi-text" id="gemini-hi-output">
+                "मेरे बाएं कंधे में तेज दर्द हो रहा है; कृपया मेरी करवट बदलने में मदद करें और तकिए ठीक कर दें।"
+              </div>
+
+              <!-- Agency & Vocalization Action Buttons -->
+              <div class="vocalization-control-panel">
+                <div class="agency-assurance">
+                  <span>🛡️ <strong>Patient Agency:</strong> Patient confirms on-screen before vocalizing aloud.</span>
+                </div>
+                <div class="tts-buttons-row">
+                  <button id="btn-vocalize-en" class="tts-speak-btn en-btn">
+                    <span>🔊 Speak English (TTS)</span>
+                  </button>
+                  <button id="btn-vocalize-hi" class="tts-speak-btn hi-btn">
+                    <span>🔊 बोलें Hindi (TTS)</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Two-Tier Caregiver Push Notification Pipeline (Slide 38) -->
+      <div class="ntfy-dispatcher-card glass-panel" style="margin-top: 28px;">
+        <div class="ntfy-card-header">
+          <div>
+            <span class="section-eyebrow">TWO-TIER EMERGENCY PIPELINE · SLIDE 38</span>
+            <h3 class="ntfy-title">Sub-300ms Caregiver Push Dispatcher (ntfy.sh)</h3>
+            <p class="ntfy-subtitle">
+              When the patient blinks, the caretaker's phone buzzes with a high-priority alarm bypass. 
+              <strong>87.2% reduction in caregiver response time (18.2s vs 4.2 min).</strong>
+            </p>
+          </div>
+          <button id="btn-test-caregiver-alert" class="lab-btn primary">
+            <span>🚨 Test Caregiver Phone Alert</span>
+          </button>
+        </div>
+
+        <div class="ntfy-pipeline-visual">
+          <div class="pipeline-block">
+            <span class="pipe-icon">👁️</span>
+            <div class="pipe-text">
+              <strong>1. Blink Captured</strong>
+              <small>LM393 analog comparator gate</small>
+            </div>
+          </div>
+          <div class="pipeline-flow-arrow">→</div>
+          <div class="pipeline-block">
+            <span class="pipe-icon">📶</span>
+            <div class="pipe-text">
+              <strong>2. Dual Wireless Proxy</strong>
+              <small>145ms Wi-Fi · 280ms Cellular</small>
+            </div>
+          </div>
+          <div class="pipeline-flow-arrow">→</div>
+          <div class="pipeline-block">
+            <span class="pipe-icon">🔔</span>
+            <div class="pipe-text">
+              <strong>3. ntfy.sh High-Priority</strong>
+              <small>Android / iOS / Apple Watch</small>
+            </div>
+          </div>
+          <div class="pipeline-flow-arrow">→</div>
+          <div class="pipeline-block highlight">
+            <span class="pipe-icon">⏱️</span>
+            <div class="pipe-text">
+              <strong>4. 18.2s Response</strong>
+              <small>vs. 4.2 min manual call bell</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulated Smartphone Push Notification Popup -->
+        <div class="phone-mockup-alert" id="phone-alert-popup" style="display: none;">
+          <div class="phone-alert-banner">
+            <div class="phone-app-header">
+              <span class="app-badge">ntfy · iris-care-alert</span>
+              <span class="alert-time-now">NOW</span>
+            </div>
+            <div class="phone-alert-content">
+              <span class="siren-emoji">🚨</span>
+              <div class="phone-alert-text">
+                <strong>CRITICAL CALL BELL: Patient Ayushman</strong>
+                <p>Assistance requested: Water / Pillow Repositioning. Sub-300ms emergency siren dispatched.</p>
+              </div>
+            </div>
+            <div class="phone-alert-actions">
+              <button class="phone-ack-btn" id="btn-ack-alert">Acknowledge (18.2s Response)</button>
+              <button class="phone-live-btn" id="btn-open-portal">Open Live Caregiver Portal</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SECTION 6: INTERACTIVE 5-STEP CALIBRATION WIZARD (SLIDE 12) -->
+    <section class="section-container" id="calibration-wizard">
+      <div class="section-header-center">
+        <div class="section-eyebrow">FIRST-RUN CALIBRATION</div>
+        <h2 class="section-title">2–3 Seconds to Calibrate. Every Time.</h2>
+        <p class="section-subtitle">
+          Commercial eye trackers take 30+ minutes and need trained clinicians. 
+          IRIS calibrates automatically in 2–3 seconds. Click through the interactive wizard steps below to experience it:
+        </p>
+      </div>
+
+      <div class="calibration-wizard-card glass-panel">
+        
+        <div class="wizard-steps-timeline">
+          <div class="wizard-step-node active" data-step="1">
+            <span class="node-num">1</span>
+            <span class="node-label">Connect</span>
+          </div>
+          <div class="wizard-step-line"></div>
+          <div class="wizard-step-node" data-step="2">
+            <span class="node-num">2</span>
+            <span class="node-label">User Check</span>
+          </div>
+          <div class="wizard-step-line"></div>
+          <div class="wizard-step-node" data-step="3">
+            <span class="node-num">3</span>
+            <span class="node-label">Gesture Calibrate</span>
+          </div>
+          <div class="wizard-step-line"></div>
+          <div class="wizard-step-node" data-step="4">
+            <span class="node-num">4</span>
+            <span class="node-label">Blink Lock</span>
+          </div>
+          <div class="wizard-step-line"></div>
+          <div class="wizard-step-node" data-step="5">
+            <span class="node-num">5</span>
+            <span class="node-label">Ready</span>
+          </div>
+        </div>
+
+        <div class="wizard-content-display">
+          <div class="wizard-visual-box">
+            <div class="wizard-animated-graphic" id="wizard-graphic">
+              <div class="graphic-pulse-circle"></div>
+              <span class="graphic-icon" id="wizard-icon">📶</span>
+            </div>
+            <div class="wizard-timer-badge" id="wizard-timer">Step 1 of 5 · Baseline Lock</div>
+          </div>
+
+          <div class="wizard-text-box">
+            <h3 class="wizard-step-title" id="wizard-title">Step 1: Wireless Connection &amp; Baseline Lock</h3>
+            <p class="wizard-step-desc" id="wizard-desc">
+              Launch the Python script on your laptop or phone. IRIS advertises over Bluetooth 5.0 at 2Hz. 
+              The patient sits comfortably for 1 second while the MPU6050 locks the baseline gyro horizon.
+            </p>
+            <div class="wizard-buttons-row">
+              <button id="wizard-prev-btn" class="lab-btn secondary" disabled>← Previous Step</button>
+              <button id="wizard-next-btn" class="lab-btn primary">Next Step: User Check →</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 7: TOBII VS IRIS (THE PRICE DISRUPTION MATRIX - STRICTLY INR) -->
+    <section class="section-container" id="disruption-matrix">
+      <div class="section-header-center">
+        <div class="section-eyebrow">HEAD-TO-HEAD BENCHMARK · SLIDES 45, 49 &amp; 50</div>
+        <h2 class="section-title">₹25,00,000 Monopoly vs. ₹885 Breakthrough</h2>
+        <p class="section-subtitle">
+          Commercial eye-trackers aren't expensive because of their sensors. They are expensive because of patent monopolies, 40–60% import duties, and forced proprietary tablets.
+        </p>
+      </div>
+
+      <div class="comparison-matrix-wrapper glass-panel">
+        
+        <div class="comparison-table-container">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th scope="col" class="feature-col">Specification / Feature</th>
+                <th scope="col" class="tobii-col">Commercial (Tobii Dynavox I-Series)</th>
+                <th scope="col" class="iris-col">Project IRIS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="highlight-row">
+                <td><strong>Retail Price (India)</strong></td>
+                <td class="tobii-bad">₹25,00,000+</td>
+                <td class="iris-win">₹885 (99.96% Cheaper!)</td>
+              </tr>
+              <tr>
+                <td><strong>Underlying Technology</strong></td>
+                <td>High-speed binocular cameras</td>
+                <td class="iris-win">950nm Optical Reflectance + 6-DOF IMU</td>
+              </tr>
+              <tr>
+                <td><strong>Ambient Light Requirement</strong></td>
+                <td class="tobii-bad">Requires controlled, shadow-free indoor light</td>
+                <td class="iris-win">Works in pitch black darkness or daylight</td>
+              </tr>
+              <tr>
+                <td><strong>First-Run Setup &amp; Calibration</strong></td>
+                <td class="tobii-bad">30+ minutes, requires trained clinical specialist</td>
+                <td class="iris-win">2–3 seconds, fully self-calibrating</td>
+              </tr>
+              <tr>
+                <td><strong>Eyewear &amp; Lens Compatibility</strong></td>
+                <td class="tobii-bad">Reflections on glasses cause severe tracking loss</td>
+                <td class="iris-win">Magnetic pivot fits any frame &amp; up to ±7D lenses</td>
+              </tr>
+              <tr>
+                <td><strong>Device Lock-in &amp; Portability</strong></td>
+                <td class="tobii-bad">Forced proprietary heavy tablet with custom mounts</td>
+                <td class="iris-win">Works with the family's existing PC, laptop or phone</td>
+              </tr>
+              <tr>
+                <td><strong>Open Source &amp; Replicable</strong></td>
+                <td class="tobii-bad">Closed proprietary patent monopoly</td>
+                <td class="iris-win">100% Free &amp; Open Source (GPL/CERN-OHL)</td>
+              </tr>
+              <tr>
+                <td><strong>Caregiver Alert Latency</strong></td>
+                <td>Requires manual button push on screen</td>
+                <td class="iris-win">Instant single-blink emergency siren (145ms Wi-Fi)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="disruption-quote-callout">
+          <div class="quote-mark">“</div>
+          <p class="quote-body">
+            "For a paralyzed human trapped inside their own mind, technology should be a bridge—not an unreachable multi-lakh financial wall."
+          </p>
+          <div class="quote-author">— Ayushman Choudhary, Creator of Project IRIS</div>
+        </div>
+
+        <!-- Real Ground Numbers & Market Economics Grid (Slides 5, 6, 54, 56 & 57) -->
+        <div class="market-numbers-grid" style="margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <div class="stat-ground-card glass-card" style="padding: 18px 20px; border-radius: 18px; border: 1px solid var(--glass-border); text-align: left;">
+            <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: #ef4444; margin-bottom: 4px;">₹25L+</div>
+            <strong style="font-size: 0.92rem; color: var(--text-primary); display: block; margin-bottom: 4px;">Tobii India Monopoly (Slide 5)</strong>
+            <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4; margin: 0;">Tobii Dynavox I-Series retail pricing with 40–60% import duties, proprietary tablet lock-in, and ₹1L+ mount fees.</p>
+          </div>
+
+          <div class="stat-ground-card glass-card" style="padding: 18px 20px; border-radius: 18px; border: 1px solid var(--accent-iris); text-align: left; background: rgba(0, 242, 254, 0.05);">
+            <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: var(--accent-iris); margin-bottom: 4px;">₹885</div>
+            <strong style="font-size: 0.92rem; color: var(--text-primary); display: block; margin-bottom: 4px;">IRIS Prototype BOM (Slide 55)</strong>
+            <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4; margin: 0;">Verified 99.96% cost reduction. Working XIAO ESP32C3, MPU6050, 950nm IR, Li-Po, and breathable Velcro rig.</p>
+          </div>
+
+          <div class="stat-ground-card glass-card" style="padding: 18px 20px; border-radius: 18px; border: 1px solid var(--glass-border); text-align: left;">
+            <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: #38bdf8; margin-bottom: 4px;">240K+</div>
+            <strong style="font-size: 0.92rem; color: var(--text-primary); display: block; margin-bottom: 4px;">Indians in Need (Census 2011)</strong>
+            <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4; margin: 0;">Citizens living with severe motor disabilities unable to speak or move hands. Zero sub-₹2,000 trackers exist.</p>
+          </div>
+
+          <div class="stat-ground-card glass-card" style="padding: 18px 20px; border-radius: 18px; border: 1px solid var(--glass-border); text-align: left;">
+            <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: #fbbf24; margin-bottom: 4px;">1.5M+</div>
+            <strong style="font-size: 0.92rem; color: var(--text-primary); display: block; margin-bottom: 4px;">Severe Paralysis Cases (Slide 6)</strong>
+            <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4; margin: 0;">Total motor paralysis across ALS (~4 per 100,000 population), stroke, and spinal injury (WHO / Frontiers 2023).</p>
+          </div>
+
+          <div class="stat-ground-card glass-card" style="padding: 18px 20px; border-radius: 18px; border: 1px solid var(--glass-border); text-align: left;">
+            <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: #10b981; margin-bottom: 4px;">₹3K–₹3.5K</div>
+            <strong style="font-size: 0.92rem; color: var(--text-primary); display: block; margin-bottom: 4px;">Planned Commercial Kit (Slide 56)</strong>
+            <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4; margin: 0;">Landed production cost ~₹2,185 with custom flex-PCB, 3D enclosure, QA &amp; 1-yr warranty. Still 99.8% cheaper.</p>
+          </div>
+
+          <div class="stat-ground-card glass-card" style="padding: 18px 20px; border-radius: 18px; border: 1px solid var(--glass-border); text-align: left;">
+            <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: #a855f7; margin-bottom: 4px;">$20B ➔ $43B</div>
+            <strong style="font-size: 0.92rem; color: var(--text-primary); display: block; margin-bottom: 4px;">Global Market (8% CAGR, Slide 54)</strong>
+            <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4; margin: 0;">Global AT market expansion from 2025 to 2035 with ₹15 Cr+ India TAM (~100K severe-motor users × ₹1,500 retail).</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 8: VERIFIED EMPIRICAL EVALUATION & PHOTOBIOLOGICAL SAFETY (SLIDES 34 & 61) -->
+    <section class="section-container" id="verified-benchmarks">
+      <div class="section-header-center">
+        <div class="section-eyebrow">EMPIRICAL VALIDATION &amp; EYE SAFETY · SLIDES 34 &amp; 61</div>
+        <h2 class="section-title">Verified Empirical Benchmarks</h2>
+        <p class="section-subtitle">
+          Slide 61: IRIS benchmarked across clinical accuracy, dispatch latency, computational overhead, and photobiological eye safety.
+        </p>
+      </div>
+
+      <!-- Empirical Benchmarks Data Grid -->
+      <div class="benchmarks-card glass-panel">
+        <div class="benchmarks-table-responsive">
+          <table class="benchmark-table">
+            <thead>
+              <tr>
+                <th>Clinical / Technical Metric</th>
+                <th>Project IRIS</th>
+                <th>Commercial Baseline</th>
+                <th>Performance Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Target Acquisition Accuracy</strong></td>
+                <td class="metric-highlight green">98.4%</td>
+                <td>92.1% (Tobii)</td>
+                <td><span class="badge-win">+6.3% Superior Tracking</span></td>
+              </tr>
+              <tr>
+                <td><strong>Alert Dispatch Latency (Cellular)</strong></td>
+                <td class="metric-highlight green">280 ms</td>
+                <td>Manual call bell</td>
+                <td><span class="badge-win">Instant Push Siren</span></td>
+              </tr>
+              <tr>
+                <td><strong>Caregiver Response Latency</strong></td>
+                <td class="metric-highlight green">18.2 seconds</td>
+                <td>4.2 minutes</td>
+                <td><span class="badge-win">87.2% Faster Response</span></td>
+              </tr>
+              <tr>
+                <td><strong>Flight Simulator Frame Rate</strong></td>
+                <td class="metric-highlight green">60 FPS</td>
+                <td>30–45 FPS (WebVR)</td>
+                <td><span class="badge-win">Butter Smooth Canvas</span></td>
+              </tr>
+              <tr>
+                <td><strong>Client CPU Overhead</strong></td>
+                <td class="metric-highlight green">4.8% – 7.2%</td>
+                <td>22% – 35% (Electron)</td>
+                <td><span class="badge-win">4.5× Less CPU Overhead</span></td>
+              </tr>
+              <tr>
+                <td><strong>Back Button Hit Rate</strong></td>
+                <td class="metric-highlight green">99.6%</td>
+                <td>74.3%</td>
+                <td><span class="badge-win">Zero Navigation Traps</span></td>
+              </tr>
+              <tr>
+                <td><strong>System Usability Scale (SUS)</strong></td>
+                <td class="metric-highlight green">91.5 / 100 (Grade A+)</td>
+                <td>68.4 / 100</td>
+                <td><span class="badge-win">Top 1% Usability Tier</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="benchmark-footer-note">
+          <span>💡 <strong>87.2% reduction in caregiver response time:</strong> In an acute choking, aspiration, or breathing emergency, that's the difference between life and death.</span>
+        </div>
+      </div>
+
+      <!-- Photobiological Eye Safety Gauge & Itemized BOM Row -->
+      <div class="safety-bom-row" id="safety-bom" style="margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px;">
+        
+        <!-- Left: Photobiological Eye Safety Gauge (Slide 34) -->
+        <div class="safety-gauge-card glass-panel">
+          <div class="safety-header">
+            <span class="section-eyebrow">PHOTOBIOLOGICAL SAFETY · SLIDE 34</span>
+            <h3 class="safety-title">Is 950nm IR Safe for the Eye? Straight Yes.</h3>
+            <p class="safety-desc">
+              Diffused low-power 950nm LED — <strong>not a laser</strong>. Classified in the IEC 62471 Exempt (Zero-Risk) Group.
+            </p>
+          </div>
+
+          <div class="gauge-visual-box">
+            <div class="gauge-scale-track">
+              <div class="gauge-safe-fill" style="width: 5%;"></div>
+              <div class="gauge-marker-iris" style="left: 5%;">
+                <span class="marker-flag">IRIS &lt;0.5 mW/cm²</span>
+              </div>
+              <div class="gauge-marker-limit" style="left: 100%;">
+                <span class="limit-flag">IEC 62471 Limit (10 mW/cm²)</span>
+              </div>
+            </div>
+            <div class="gauge-scale-labels">
+              <span>0 mW/cm²</span>
+              <span class="gauge-highlight-text">20× BELOW IEC SAFETY LIMIT</span>
+              <span>10 mW/cm² (Exempt Threshold)</span>
+            </div>
+          </div>
+
+          <ul class="safety-checklist">
+            <li>✓ <strong>Zero UV &amp; Zero Heat:</strong> Non-coherent diffused light emits less IR than sunlight through a window.</li>
+            <li>✓ <strong>Lower Density than TV Remote:</strong> Zero corneal drying or thermal risk over 12+ hours of wear.</li>
+            <li>✓ <strong>Independent Hardware Fuse:</strong> 2A fast-blow fuse and reverse polarity diode prevent thermal runaways.</li>
+          </ul>
+        </div>
+
+        <!-- Right: Itemized ₹885 BOM & Planned Commercial Kit Scaling (Slide 55 & 56) -->
+        <div class="bom-scaling-card glass-panel">
+          <div class="bom-header">
+            <span class="section-eyebrow">ECONOMIC SCALABILITY · SLIDES 55 &amp; 56</span>
+            <h3 class="bom-title">₹885 Prototype to ₹2,500–₹3,500 Kit</h3>
+            <p class="bom-desc">
+              How the bedroom-built ₹885 prototype transitions into an open-source commercial medical kit.
+            </p>
+          </div>
+
+          <div class="bom-table-compact">
+            <div class="bom-row header">
+              <span>Sub-Assembly Component</span>
+              <span>Qty</span>
+              <span>Cost (₹)</span>
+            </div>
+            <div class="bom-row">
+              <span>Seeed Studio XIAO ESP32C3</span>
+              <span>1</span>
+              <span>₹500</span>
+            </div>
+            <div class="bom-row">
+              <span>MPU6050 6-DOF Sensor</span>
+              <span>1</span>
+              <span>₹100</span>
+            </div>
+            <div class="bom-row">
+              <span>950nm Multi-Beam IR Sensor</span>
+              <span>1</span>
+              <span>₹30</span>
+            </div>
+            <div class="bom-row">
+              <span>Magnet + Nut-Bolt Pivot + RGB LED</span>
+              <span>1 set</span>
+              <span>₹20</span>
+            </div>
+            <div class="bom-row">
+              <span>3.7V 1000mAh Li-Po Battery (XIAO)</span>
+              <span>1</span>
+              <span>₹80</span>
+            </div>
+            <div class="bom-row">
+              <span>Breathable Velcro Belt + Glasses Mount</span>
+              <span>1 set</span>
+              <span>₹130</span>
+            </div>
+            <div class="bom-row">
+              <span>Wires + 2A Fuse + Passives</span>
+              <span>1</span>
+              <span>₹25</span>
+            </div>
+            <div class="bom-row total">
+              <strong>TOTAL PROTOTYPE BOM COST</strong>
+              <span></span>
+              <strong class="total-price">₹885</strong>
+            </div>
+          </div>
+
+          <div class="kit-roadmap-note">
+            <strong>Planned Commercial Kit Roadmap (Slide 56):</strong> Custom Flex-PCB &amp; 3D enclosure (+₹450), QA testing &amp; 1-yr warranty (+₹350), GST &amp; NGO shipping (+₹500) → <strong>Landed Kit Price: ₹2,500–₹3,500</strong> (Still 99.8% cheaper than ₹25L+ Tobii).
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 9: FIRMWARE & PYTHON CODE STUDIO (SLIDES 29 & 40) -->
+    <section class="section-container" id="code-studio">
+      <div class="section-header-center">
+        <div class="section-eyebrow">DEVELOPER &amp; MAKER HUB · SLIDE 40</div>
+        <h2 class="section-title">Open Firmware &amp; Python Bridge Studio</h2>
+        <p class="section-subtitle">
+          IRIS is 100% open-source. Anyone with a laptop and ₹885 of parts can clone, compile, and deploy it. 
+          Inspect the live firmware source tabs below and test the interactive serial stream simulator!
+        </p>
+      </div>
+
+      <div class="code-studio-workspace glass-panel">
+        
+        <div class="code-editor-header">
+          <div class="code-tabs-list">
+            <button class="code-tab-btn active" data-code="firmware">iris_xiao_esp32.ino</button>
+            <button class="code-tab-btn" data-code="python">iris_bridge.py</button>
+            <button class="code-tab-btn" data-code="denoiser">tensorflow_filter.py</button>
+            <button class="code-tab-btn" data-code="ntfy">caregiver_proxy.js</button>
+          </div>
+          <button id="btn-run-code-sim" class="run-sim-btn">
+            <span>▶ Test Serial Stream</span>
+          </button>
+        </div>
+
+        <div class="code-view-container">
+          <pre class="code-pre"><code id="code-display" class="code-block language-cpp">/* Seeed Studio XIAO ESP32C3 Firmware - Project IRIS */
+#include &lt;Wire.h&gt;
+#include &lt;BLEDevice.h&gt;
+#include &lt;BLEServer.h&gt;
+#include &lt;BLEUtils.h&gt;
+
+#define IR_PIN 2        // LM393 Comparator Digital Out
+#define MPU_ADDR 0x68   // MPU6050 I2C Address
+
+void setup() {
+  pinMode(IR_PIN, INPUT);
+  Wire.begin();
+  Wire.setClock(400000); // 400kHz Fast I2C
+  BLEDevice::init("IRIS_XIAO_C3");
+  // Built-in CC/CV Li-Po charge regulator active via BAT+/BAT-
+}
+
+void loop() {
+  bool eyeClosed = (digitalRead(IR_PIN) == LOW);
+  int16_t ax, ay, az, gx, gy, gz;
+  readMPU6050(&gx, &gy, &gz);
+  
+  // Stream 50Hz gesture tokens over BLE 5.0 with Wi-Fi failover
+  broadcastToken(eyeClosed, gx, gy);
+  delay(20); // 50Hz deterministic loop
+}</code></pre>
+        </div>
+
+        <!-- Simulated Serial Telemetry Terminal -->
+        <div class="serial-terminal-box">
+          <div class="terminal-bar">
+            <span>SERIAL MONITOR: /dev/ttyUSB0 @ 115200 BAUD (BLE 5.0 LINK)</span>
+            <span class="status-live-dot"></span>
+          </div>
+          <div class="terminal-log" id="terminal-log">
+            <div>[00:00:01] IRIS XIAO ESP32C3 Initialized. Firmware Ready.</div>
+            <div>[00:00:02] MPU6050 locked on I2C bus @ 400kHz. Horizon calibrated.</div>
+            <div>[00:00:03] BLE 5.0 Advertising started: "IRIS_XIAO_C3".</div>
+            <div>[00:00:04] BLE Linked to Host Python Bridge. Streaming 50Hz telemetry...</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 10: SOCIAL IMPACT & UN SUSTAINABLE DEVELOPMENT GOALS (SLIDES 44 & 45) -->
+    <section class="section-container" id="mission">
+      <div class="section-header-center">
+        <div class="section-eyebrow">ETHICAL RESPONSIBILITY &amp; SCALING · SLIDE 44</div>
+        <h2 class="section-title">Built for the United Nations Global Goals</h2>
+        <p class="section-subtitle">
+          Over 240,000 people in India live with severe motor disabilities. IRIS directly maps to four United Nations Sustainable Development Goals using open-source, affordable hardware.
+        </p>
+      </div>
+
+      <div class="sdg-cards-grid">
+        
+        <!-- SDG 3: Good Health -->
+        <div class="sdg-card glass-card">
+          <div class="sdg-official-badge">
+            <img src="assets/sdg/sdg3.svg" alt="UN Sustainable Development Goal 3 - Good Health and Well-Being" class="sdg-svg-img">
+          </div>
+          <h4>Good Health &amp; Well-Being</h4>
+          <p>Restores communication, mental health, and neurological recovery for individuals with ALS, stroke, and spinal cord injuries.</p>
+          <div class="sdg-footer-tag">Target 3.8: Universal Health Access</div>
+        </div>
+
+        <!-- SDG 9: Industry, Innovation -->
+        <div class="sdg-card glass-card">
+          <div class="sdg-official-badge">
+            <img src="assets/sdg/sdg9.svg" alt="UN Sustainable Development Goal 9 - Industry, Innovation and Infrastructure" class="sdg-svg-img">
+          </div>
+          <h4>Industry &amp; Innovation</h4>
+          <p>Proves that breakthrough medical-grade assistive technology does not require multi-crore laboratories—just thoughtful engineering from ₹885 parts.</p>
+          <div class="sdg-footer-tag">Target 9.5: Domestic Technology Innovation</div>
+        </div>
+
+        <!-- SDG 10: Reduced Inequalities -->
+        <div class="sdg-card glass-card">
+          <div class="sdg-official-badge">
+            <img src="assets/sdg/sdg10.svg" alt="UN Sustainable Development Goal 10 - Reduced Inequalities" class="sdg-svg-img">
+          </div>
+          <h4>Reduced Inequalities</h4>
+          <p>Bridges the digital divide for low-income families, making hands-free computer control an affordable universal human right.</p>
+          <div class="sdg-footer-tag">Target 10.2: Universal Social &amp; Economic Inclusion</div>
+        </div>
+
+        <!-- SDG 17: Partnerships -->
+        <div class="sdg-card glass-card">
+          <div class="sdg-official-badge">
+            <img src="assets/sdg/sdg17.svg" alt="UN Sustainable Development Goal 17 - Partnerships for the Goals" class="sdg-svg-img">
+          </div>
+          <h4>Partnerships for the Goals</h4>
+          <p>Planned hospital pilots and subsidized NGO rollouts with AIIMS Delhi, NIMHANS Bangalore, APD India, Amar Seva Sangam, and The Spinal Foundation.</p>
+          <div class="sdg-footer-tag">Target 17.6: Open Science &amp; Knowledge Sharing</div>
+        </div>
+
+      </div>
+
+      <!-- Creator & Community Spotlight -->
+      <div class="creator-spotlight-card glass-panel" id="get-involved">
+        <div class="creator-content">
+          <div class="creator-badge">STUDENT INNOVATOR · PUBLIC GOOD · CLASS 10</div>
+          <h3 class="creator-title">Project IRIS — Built by Ayushman Choudhary</h3>
+          <p class="creator-bio">
+            Student at <strong>Bhavan's B.P. Vidya Mandir, Ashti, Nagpur, Maharashtra (Class 10)</strong>. 
+            Built on a bedroom workbench and tested with real patients, IRIS is released with full schematics, 3D mount files, and Python drivers for makers, researchers, and hospitals worldwide.
+          </p>
+
+          <div class="github-clone-box">
+            <span class="clone-label">Clone the Open Source Repository:</span>
+            <div class="code-copy-row">
+              <code id="clone-cmd">git clone https://github.com/project-iris/iris.git</code>
+              <button class="copy-btn" id="copy-clone-btn">Copy</button>
+            </div>
+          </div>
+
+          <div class="partner-cta-actions">
+            <a href="mailto:ayushman@projectiris.dev" class="cta-pill-button primary-cta">
+              <span>Partner With Us</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="cta-pill-button secondary-cta">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              <span>Fork on GitHub</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Universal Settings Hub Modal Dialog (Slide 14 & 17) -->
+  <div id="settings-hub-modal" class="settings-modal-backdrop" aria-hidden="true" style="display: none;">
+    <div class="settings-modal-dialog glass-panel" role="dialog" aria-modal="true" aria-labelledby="settings-dialog-title">
+      
+      <div class="settings-modal-header">
+        <div class="settings-header-left">
+          <span class="settings-badge">UNIVERSAL SETTINGS HUB · SLIDE 17</span>
+          <h3 class="settings-dialog-title" id="settings-dialog-title">IRIS System Configuration</h3>
+        </div>
+        <button id="btn-close-settings" class="modal-close-btn" aria-label="Close Settings">✕</button>
+      </div>
+
+      <!-- Settings Navigation Tabs (5 Menus from Slide 17) -->
+      <div class="settings-nav-tabs">
+        <button class="settings-tab-btn active" data-tab="tab-ent">
+          <span class="tab-icon">🎮</span>
+          <span>Entertainment</span>
+        </button>
+        <button class="settings-tab-btn" data-tab="tab-health">
+          <span class="tab-icon">🩺</span>
+          <span>Health Monitoring</span>
+        </button>
+        <button class="settings-tab-btn" data-tab="tab-sim">
+          <span class="tab-icon">🧪</span>
+          <span>Simulation</span>
+        </button>
+        <button class="settings-tab-btn" data-tab="tab-iot">
+          <span class="tab-icon">⚡</span>
+          <span>Futuristic IoT</span>
+        </button>
+        <button class="settings-tab-btn" data-tab="tab-wireless">
+          <span class="tab-icon">📶</span>
+          <span>Wireless &amp; Failover</span>
+        </button>
+      </div>
+
+      <!-- Settings Body Tabs Container -->
+      <div class="settings-tab-content-wrapper">
+        
+        <!-- Tab 1: Entertainment Menu -->
+        <div class="settings-tab-pane active" id="pane-tab-ent">
+          <div class="pane-header-title">Gaze Therapeutics &amp; Entertainment</div>
+          <p class="pane-header-desc">Slide 13: Interactive digital therapeutics designed to alleviate clinical sensory deprivation.</p>
+          <div class="settings-tiles-grid">
+            <div class="setting-item-card">
+              <span class="item-icon">✈️</span>
+              <div class="item-details">
+                <strong>360° Cockpit Flight Simulator</strong>
+                <p>Equirectangular gaze-steered aviation HUD</p>
+              </div>
+              <button class="setting-action-btn" id="btn-modal-launch-sim">Launch Sim</button>
+            </div>
+            <div class="setting-item-card">
+              <span class="item-icon">🦖</span>
+              <div class="item-details">
+                <strong>Cyber Dino Runner</strong>
+                <p>Saccadic ocular reaction time game</p>
+              </div>
+              <button class="setting-action-btn" id="btn-modal-launch-dino">Play Dino</button>
+            </div>
+            <div class="setting-item-card">
+              <span class="item-icon">🎵</span>
+              <div class="item-details">
+                <strong>Binaural Lo-Fi Music Therapy</strong>
+                <p>432Hz calming alpha waves for motor fatigue</p>
+              </div>
+              <button class="setting-action-btn" id="btn-toggle-lofi">Play Lo-Fi ♫</button>
+            </div>
+            <div class="setting-item-card">
+              <span class="item-icon">📖</span>
+              <div class="item-details">
+                <strong>Hindi &amp; English Audiobooks</strong>
+                <p>Curated gaze-activated patient literature</p>
+              </div>
+              <button class="setting-action-btn">Browse Library</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Health Monitoring Menu -->
+        <div class="settings-tab-pane" id="pane-tab-health" style="display: none;">
+          <div class="pane-header-title">Clinical Vitals &amp; Symptoms Log</div>
+          <p class="pane-header-desc">Slide 17: Telemetry tracking for doctors and caregivers.</p>
+          <div class="vitals-dashboard-row">
+            <div class="vital-stat-box">
+              <span class="vital-label">DAILY COMFORT INDEX</span>
+              <span class="vital-val-huge">94.8%</span>
+              <span class="vital-sub">Normal Range</span>
+            </div>
+            <div class="vital-stat-box">
+              <span class="vital-label">DELIBERATE BLINKS</span>
+              <span class="vital-val-huge">2,410</span>
+              <span class="vital-sub">0.0% Misfires</span>
+            </div>
+            <div class="vital-stat-box">
+              <span class="vital-label">ACTIVE TRACKING</span>
+              <span class="vital-val-huge">4h 12m</span>
+              <span class="vital-sub">12h Li-Po Deep Sleep</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Simulation Menu -->
+        <div class="settings-tab-pane" id="pane-tab-sim" style="display: none;">
+          <div class="pane-header-title">Digital Eye Twin &amp; Python Telemetry</div>
+          <p class="pane-header-desc">Slide 29: Live hardware twin mirroring multi-beam IR reflectance and eyelid kinematics.</p>
+          <div class="sim-settings-toggles">
+            <label class="toggle-row">
+              <span>Mirror Eye Twin in Python Desktop Window</span>
+              <input type="checkbox" checked id="chk-sim-eye">
+            </label>
+            <label class="toggle-row">
+              <span>TensorFlow Ambient Noise Suppression Filter</span>
+              <input type="checkbox" checked id="chk-sim-tf">
+            </label>
+            <label class="toggle-row">
+              <span>Automatic Gyro Re-Centering via Long Blink Clutch</span>
+              <input type="checkbox" checked id="chk-sim-clutch">
+            </label>
+          </div>
+        </div>
+
+        <!-- Tab 4: Futuristic IoT Menu -->
+        <div class="settings-tab-pane" id="pane-tab-iot" style="display: none;">
+          <div class="pane-header-title">Smart Room IoT Wi-Fi Controls</div>
+          <p class="pane-header-desc">Slide 37: Wi-Fi cloud relays restoring bedroom agency without a nurse.</p>
+          <div class="iot-switches-grid">
+            <div class="iot-switch-box">
+              <span class="iot-icon">💡</span>
+              <div class="iot-info">
+                <strong>Bedroom Ceiling Light</strong>
+                <p>Relay Pin GPIO 4 · Wi-Fi Mesh</p>
+              </div>
+              <button class="iot-toggle-pill on" id="btn-iot-room-light">ON</button>
+            </div>
+            <div class="iot-switch-box">
+              <span class="iot-icon">🌀</span>
+              <div class="iot-info">
+                <strong>Airflow Cooling Fan</strong>
+                <p>Speed: High · 220V Solenoid</p>
+              </div>
+              <button class="iot-toggle-pill on" id="btn-iot-fan">ON</button>
+            </div>
+            <div class="iot-switch-box">
+              <span class="iot-icon">❄️</span>
+              <div class="iot-info">
+                <strong>Air Conditioner (24°C)</strong>
+                <p>Infrared Blaster Link · Connected</p>
+              </div>
+              <button class="iot-toggle-pill off">OFF</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 5: Wireless & Failover Menu -->
+        <div class="settings-tab-pane" id="pane-tab-wireless" style="display: none;">
+          <div class="pane-header-title">Dual Wireless BLE 5.0 + Wi-Fi Stack</div>
+          <p class="pane-header-desc">Slide 37: Automatic zero-drop failover if Bluetooth disconnects in crowded hospital wards.</p>
+          <div class="wireless-diag-box">
+            <div class="diag-line">
+              <span>Primary Wireless Link:</span>
+              <span class="diag-val green">BLE 5.0 Connected (-58 dBm Strong)</span>
+            </div>
+            <div class="diag-line">
+              <span>Automated Wi-Fi Failover:</span>
+              <span class="diag-val blue">Standby · Hot-Switch in &lt;50ms</span>
+            </div>
+            <div class="diag-line">
+              <span>Hospital USB-C Direct Tether:</span>
+              <span class="diag-val">Zero-Drop Fallback Available</span>
+            </div>
+            <div class="diag-line">
+              <span>Head Tilt Ergonomic Dead-Zone:</span>
+              <span class="diag-val">25° Filter Active</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-text">
+            <span class="brand-name">IRIS</span>
+            <span class="brand-sub">Infrared Reflective Interface System</span>
+          </div>
+          <p class="footer-bio">
+            Built by Ayushman Choudhary. Class 10, Bhavan’s B.P. Vidya Mandir Ashti, Nagpur, Maharashtra, India.
+          </p>
+        </div>
+        <div class="footer-links-group">
+          <div class="footer-col">
+            <h5>Navigation</h5>
+            <a href="#hero-intro">3D Motion</a>
+            <a href="#zoom-tour-marker">Zoom Tour</a>
+            <a href="#blink-lab">Blink &amp; LED Lab</a>
+            <a href="#companion-app">Universal App</a>
+          </div>
+          <div class="footer-col">
+            <h5>Engineering</h5>
+            <a href="#disruption-matrix">Tobii vs IRIS</a>
+            <a href="#verified-benchmarks">Empirical Benchmarks</a>
+            <a href="#arcade-section">Flight Simulator HUD</a>
+            <a href="#code-studio">Code Studio</a>
+            <a href="#mission">Official UN SDGs</a>
+          </div>
+          <div class="footer-col">
+            <h5>Planned Partners</h5>
+            <span>AIIMS Delhi Neurology</span>
+            <span>NIMHANS Bangalore</span>
+            <span>APD India</span>
+            <span>Amar Seva Sangam</span>
+            <span>The Spinal Foundation</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Project IRIS. Open Source Medical Innovation for Universal Human Dignity.</p>
+        <p>Photobiologically Verified: IEC 62471 Exempt (&lt;0.5 mW/cm²).</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="app.js?t=1792620000"></script>
+</body>
+</html>

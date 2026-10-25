@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <rect width="160" height="160" fill="#19486A" rx="8"/>
+  <text x="12" y="32" font-family="-apple-system, sans-serif" font-size="24" font-weight="900" fill="#ffffff">17</text>
+  <text x="44" y="20" font-family="-apple-system, sans-serif" font-size="8.5" font-weight="800" fill="#ffffff" letter-spacing="0.5">PARTNERSHIPS</text>
+  <text x="44" y="30" font-family="-apple-system, sans-serif" font-size="8.5" font-weight="800" fill="#ffffff" letter-spacing="0.5">FOR THE GOALS</text>
+  <!-- Interlocking Collaboration Rings -->
+  <g transform="translate(36, 52)">
+    <circle cx="28" cy="40" r="22" fill="none" stroke="#ffffff" stroke-width="6"/>
+    <circle cx="60" cy="40" r="22" fill="none" stroke="#ffffff" stroke-width="6"/>
+    <circle cx="44" cy="20" r="14" fill="none" stroke="#ffffff" stroke-width="5"/>
+    <path d="M44,32 L44,48" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>

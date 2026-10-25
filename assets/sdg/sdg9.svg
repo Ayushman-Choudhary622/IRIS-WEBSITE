@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <rect width="160" height="160" fill="#FD6925" rx="8"/>
+  <text x="14" y="32" font-family="-apple-system, sans-serif" font-size="24" font-weight="900" fill="#ffffff">9</text>
+  <text x="36" y="20" font-family="-apple-system, sans-serif" font-size="8.5" font-weight="800" fill="#ffffff" letter-spacing="0.5">INDUSTRY, INNOVATION</text>
+  <text x="36" y="30" font-family="-apple-system, sans-serif" font-size="8.5" font-weight="800" fill="#ffffff" letter-spacing="0.5">AND INFRASTRUCTURE</text>
+  <!-- Gear & Infrastructure Block -->
+  <g transform="translate(36, 48)">
+    <circle cx="44" cy="44" r="32" fill="none" stroke="#ffffff" stroke-width="8"/>
+    <circle cx="44" cy="44" r="16" fill="#ffffff"/>
+    <rect x="38" y="4" width="12" height="14" rx="2" fill="#ffffff"/>
+    <rect x="38" y="70" width="12" height="14" rx="2" fill="#ffffff"/>
+    <rect x="4" y="38" width="14" height="12" rx="2" fill="#ffffff"/>
+    <rect x="70" y="38" width="14" height="12" rx="2" fill="#ffffff"/>
+    <rect x="14" y="14" width="12" height="12" rx="2" fill="#ffffff" transform="rotate(45, 20, 20)"/>
+    <rect x="62" y="62" width="12" height="12" rx="2" fill="#ffffff" transform="rotate(45, 68, 68)"/>
+    <rect x="14" y="62" width="12" height="12" rx="2" fill="#ffffff" transform="rotate(-45, 20, 68)"/>
+    <rect x="62" y="14" width="12" height="12" rx="2" fill="#ffffff" transform="rotate(-45, 68, 20)"/>
+  </g>
+</svg>

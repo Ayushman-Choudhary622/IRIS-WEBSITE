@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <rect width="160" height="160" fill="#DD1367" rx="8"/>
+  <text x="12" y="32" font-family="-apple-system, sans-serif" font-size="24" font-weight="900" fill="#ffffff">10</text>
+  <text x="44" y="22" font-family="-apple-system, sans-serif" font-size="9" font-weight="800" fill="#ffffff" letter-spacing="0.5">REDUCED</text>
+  <text x="44" y="33" font-family="-apple-system, sans-serif" font-size="9" font-weight="800" fill="#ffffff" letter-spacing="0.5">INEQUALITIES</text>
+  <!-- Equality circle & bars -->
+  <g transform="translate(40, 52)">
+    <circle cx="40" cy="40" r="36" fill="none" stroke="#ffffff" stroke-width="8"/>
+    <rect x="18" y="28" width="44" height="8" rx="3" fill="#ffffff"/>
+    <rect x="18" y="44" width="44" height="8" rx="3" fill="#ffffff"/>
+  </g>
+</svg>

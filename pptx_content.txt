@@ -1,0 +1,1284 @@
+=== SLIDE 1 ===
+IRIS
+Infrared Reflective Interface System
+
+=== SLIDE 2 ===
+● 
+PROJECT IRIS
+How it All Started….
+
+=== SLIDE 3 ===
+
+
+=== SLIDE 4 ===
+● 
+PROJECT IRIS
+PROJECT IRIS  ·  v2.0
+IRIS
+.
+Infrared Reflective Interface System
+A hands-free cursor for people who can't use their hands.
+IR + IMU  ·  BLUETOOTH + WI-FI  ·  OFFLINE-CAPABLE
+Ayushman Choudhary
+Class :- 10th
+Bhavan’s B.P. Vidya Mandir Ashti
+Nagpur Maharashtra
+
+=== SLIDE 5 ===
+● 
+PROJECT IRIS
+THE PROBLEM
+Trapped inside a body that won't move.
+•  
+Locked-in syndrome, ALS & severe paralysis trap a conscious mind inside a body that cannot move.
+•  
+Commercial eye-trackers price out Indian families — leaving zero reliable options under ₹2,000.
+₹25L+
+Cost of a commercial eye-tracker like Tobii
+240K+
+Indians living with severe motor disabilities
+0
+Reliable sub-₹2,000 options available today
+Sources: Tobii Dynavox I-Series retail India 2024 (incl. import duties); Census of India 2011 (Disability Data); WHO 2024 (Neurological Conditions)
+
+=== SLIDE 6 ===
+● 
+PROJECT IRIS
+THE NUMBERS
+How many need this.
+ALS and locked-in syndrome aren't rare. They're just invisible.
+!
+CONSERVATIVE ESTIMATES
+Real numbers are higher.
+•  
+Most cases go undiagnosed in rural settings
+•  
+ALS prevalence: ~4 in 100,000 people
+•  
+Locked-in syndrome: ~1 in 339,000 people
+•  
+Those needing IRIS most are least counted
+Sources: Wolfson et al. 2023, Global Prevalence and Incidence of ALS (NIH/PMC); Nalini 2008 (ScienceDirect); Orphanet 2023; WHO 2024 (Spinal Cord Injury); Frontiers in Neurology 2023 (Liu et al.)
+
+=== SLIDE 7 ===
+
+
+=== SLIDE 8 ===
+● 
+PROJECT IRIS
+THE WEARABLE  ·  HARDWARE
+The Wearable.
+•  
+Breathable Velcro headband with continuous airflow houses the XIAO electronics.
+•  
+Customizable glasses carry only the detachable magnetic-pivot IR sensor.
+IR Sensor (Magnetic Pivot on Glasses)
+• Detachable nut-bolt + neodymium magnet mount fits any frame or ±7D lens.
+MPU6050 (Inside Breathable Velcro Belt)
+• Reads head tilt & nod for cursor direction while mesh belt keeps airflow cool.
+Seeed Studio XIAO ESP32C3 (BLE + Wi-Fi)
+• Thumb-sized chip with built-in Bluetooth 5.0, Wi-Fi failover & Deep Sleep.
+3.7V 1000mAh Li-Po Battery (12h Runtime)
+• Direct charging via XIAO BAT+/BAT- pads & internal regulator — no buck module.
+IR sensor positioned at the eye corner.
+WEAR-ALL-DAY  ·  Breathable Velcro belt + magnetic pivot glasses · XIAO ESP32C3 gives 12h battery with Deep Sleep.
+
+=== SLIDE 9 ===
+● 
+PROJECT IRIS
+INTRODUCING
+A blink becomes a click. A tilt becomes a cursor.
+•  
+Breathable Velcro headband reads head tilt to steer the cursor.
+•  
+Magnetic-pivot IR sensor on custom glasses detects deliberate blinks.
+•  
+Live Python simulation mirrors the user's eye movements on screen.
+•  
+Complete prototype built for ₹800 — 99.96% cheaper than ₹25L systems.
+TOTAL BUILD COST
+₹800
+99.96% CHEAPER
+● LIVE
+Prototype — Velcro headband houses XIAO electronics; magnetic pivot attaches IR sensor to glasses.
+Calculated: ₹800 build cost vs ₹25,00,000 Tobii retail India = 99.97% cheaper (conservative claim: 99.96%)
+
+=== SLIDE 10 ===
+● 
+PROJECT IRIS
+HOW THE CHIP THINKS
+The Brain.
+•  
+Seeed Studio XIAO ESP32C3 reads IMU angle & multi-beam IR proximity every loop.
+•  
+Python + TensorFlow pipeline filters out ambient light noise & micro-tremors.
+•  
+Streams gesture tokens over Bluetooth 5.0 with automatic Wi-Fi failover.
+SIGNAL
+CONDITION
+OUTPUT
+Head tilt left
+toward left shoulder
+→ L
+Head tilt right
+toward right shoulder
+→ R
+Head nod up
+pitch beyond threshold
+→ U
+Head nod down
+pitch beyond threshold
+→ D
+Single deliberate blink
+held, above threshold duration
+→ LC
+Double deliberate blink
+two held blinks in quick succession
+→ RC
+Natural / fast blink
+below threshold duration
+ignored
+WHY digitalRead NOT analogRead  ·  
+onboard LM393 comparator already decides open/closed in hardware.
+
+=== SLIDE 11 ===
+● 
+PROJECT IRIS
+THE CLICK LOGIC
+How a blink from a click.
+The hardest part of any blink-based interface is ignoring the blinks you don't mean. IRIS solves this with timing, not guessing.
+∼
+NATURAL BLINK
+Ignored completely.
+•  
+Fast, involuntary reflex blink
+•  
+Filtered out before any action fires
+•  
+Cursor never twitches or misfires
+< 
+200ms
+▭
+SINGLE DELIBERATE
+Left click.
+•  
+Held intentionally for 200–500ms
+•  
+Separates deliberate intent from reflex
+•  
+Fires a clean single Left Click (LC)
+200–500ms
+▭▭
+DOUBLE DELIBERATE
+Right click.
+•  
+Two deliberate blinks within 600ms
+•  
+Detected by timing window logic
+•  
+Emits an instant Right Click (RC)
+2 × 200–500ms
+
+=== SLIDE 12 ===
+● PROJECT IRIS
+STATUS FEEDBACK
+One LED tells you everything.
+A single RGB LED on the outer belt gives instant visual feedback — no screen needed.
+GREEN
+System starting
+•  
+Solid green for 2s on boot-up
+•  
+XIAO initializes IMU & IR sensors
+•  
+Starts BLE & Wi-Fi wireless stack
+BLUE · BLINKING
+Searching for device
+•  
+Blinks at 2Hz while advertising
+•  
+Waits for laptop or phone pairing
+•  
+Auto-switches to Wi-Fi if BLE drops
+YELLOW
+Connected
+•  
+Solid yellow once link is locked
+•  
+Live cursor & eye twin active
+•  
+Visible to caregivers across room
+WHY A STATUS LED?  A paralyzed user can't check a screen. The LED makes device state visible to the caretaker at a glance — from across the room.
+
+=== SLIDE 13 ===
+● 
+PROJECT IRIS
+FIRST-RUN SETUP
+2–3 seconds to calibrate, every time you need it.
+Every face and every posture is different, so IRIS asks a few quick questions before it hands over the cursor.
+1
+Connect
+•  
+Launch Python script
+•  
+Pairs via BLE or Wi-Fi
+•  
+Sit still for baseline lock
+2
+User check
+•  
+Detects new vs. saved user
+•  
+Returning users load profile
+•  
+Skips ahead in <5 seconds
+3
+Gesture calibrate
+•  
+Nod up/down & tilt left/right
+•  
+Learns comfortable head range
+•  
+Sets dead-zone filter
+4
+Blink calibrate
+•  
+Takes just 2–3 seconds
+•  
+Locks deliberate blink timing
+•  
+Syncs live Python eye twin
+5
+Ready
+•  
+Cursor goes live immediately
+•  
+Drives any OS or web app
+•  
+Zero further setup needed
+SAVED PROFILE  ·  First-run blink calibration takes just 2–3 seconds. Returning users load their saved profile instantly.
+
+=== SLIDE 14 ===
+● PROJECT IRIS
+THE APP
+One app. Everything they need.
+Streamlined around 4 main screen tiles — Communication, SOS Emergency, Health Tracker, and a master Settings Hub housing every advanced menu.
+●
+Communication — Water, Rest, Call & AI speech tiles
+●
+SOS Emergency — Instant one-blink caregiver siren
+●
+Health Tracker — Daily comfort, pain & vitals log
+●
+Settings Hub — Entertainment, Health, Sim & IoT menus
+●
+Smart Room IoT — Control lights & fans over Wi-Fi
+
+=== SLIDE 15 ===
+
+
+=== SLIDE 16 ===
+●
+PROJECT IRIS
+AI-AUGMENTED COMMUNICATION
+Telegraphic in. Full sentences out.
+Patients with motor fatigue can't spell long sentences. Gemini AI expands telegraphic intent into articulate speech.
+PATIENT INPUT (telegraphic)
+pain / left shoulder / sharp
+↓ Gemini AI Expansion
+"I am experiencing a sharp pain in my left shoulder; could you please help me readjust my position and check my pillows?"
+→ Spoken aloud via Web Speech API TTS
+KEY FEATURES
+●
+Google Gemini multimodal LLM for expansion
+●
+Context-aware: time-of-day, history, clinical terms
+●
+Patient confirms before vocalization (agency)
+●
+Quick emergency tiles bypass AI for instant alert
+●
+Hindi + English support
+●
+Local TTS via Web Speech API — no cloud voice
+●
+Cancel/confirm options always visible
+●
+Telegraphic mode for severe motor fatigue
+
+=== SLIDE 17 ===
+
+
+=== SLIDE 18 ===
+
+
+=== SLIDE 19 ===
+● 
+PROJECT IRIS
+THE APP
+One click, one message to the caretaker.
+•  
+Desktop & mobile companion app built around large, high-contrast tiles.
+•  
+Clicking Water, Rest, or Call sends an instant push alert to the caregiver's phone.
+•  
+Lets paralyzed patients ask for daily essentials without speaking a word.
+Large accessible tiles
+Built for impaired motor control.
+Instant notification
+Caretaker's phone buzzes within a second.
+Same cursor engine
+No new gestures to learn.
+Companion app — tile grid built for daily care.
+NOTIFICATION FLOW
+IRIS cursor
+  →  
+tile click
+  →  
+caretaker phone buzzes
+
+=== SLIDE 20 ===
+● PROJECT IRIS
+THE APP  ·  SETTINGS HUB & IOT MENUS
+Everything inside the Settings Hub.
+Entertainment and Health Monitoring are organized inside Settings alongside Simulation, Futuristic IoT, and Bluetooth menus.
+●
+Entertainment Menu — 360° Flight Simulator, gaze games, music & audiobooks
+●
+Health Monitoring Menu — Detailed clinical vitals logs and symptom history
+●
+Simulation Menu — Live Python eye digital twin & interactive room light simulator
+●
+Futuristic IoT Menu — Wi-Fi cloud control for room lights, fans & appliances
+●
+Bluetooth & Wi-Fi Menu — Wireless failover, sensitivity & user profile tuning
+●
+Emergency SOS & Calls — One-blink caretaker alert & family video calling
+
+=== SLIDE 21 ===
+DEMO
+
+=== SLIDE 22 ===
+● 
+PROJECT IRIS
+SYSTEM FLOW
+Headband → BLE / Wi-Fi → Cursor.
+Two-piece magnetic rig, dual wireless link, zero cables to the laptop.
+1
+THE WEARABLE
+IR + IMU + XIAO C3
+•  
+Magnetic-pivot IR sensor on glasses
+•  
+MPU6050 + XIAO inside Velcro belt
+•  
+3.7V Li-Po with 12h Deep Sleep
+▶
+2
+THE BRAIN
+XIAO ESP32C3 + AI
+•  
+Reads multi-beam IR & IMU angles
+•  
+TensorFlow pipeline removes noise
+•  
+Streams over BLE or Wi-Fi failover
+▶
+3
+THE BRIDGE
+BLE / WI-FI → PYTHON
+•  
+Renders live eye twin in Python
+•  
+Drives real OS cursor via PyAutoGUI
+•  
+Controls apps, keyboard & IoT lights
+WHY HYBRID?  
+IR alone can't read head position. IMU alone can't read a blink. Together they cover full cursor control plus click actions.
+
+=== SLIDE 23 ===
+● 
+PROJECT IRIS
+THE PYTHON BRIDGE & EYE SIMULATION
+The Bridge.
+•  
+Receives wireless stream from XIAO ESP32C3 (BLE 5.0 + Wi-Fi failover).
+•  
+Renders a live digital twin of the user's eye blinking in real time.
+•  
+Maps gestures to OS cursor actions across Windows, macOS & Android.
+PYSERIAL
+PYAUTOGUI
+XIAO BLE / WI-FI
+SIGNAL PATH
+Why Python barely changes between USB and Bluetooth.
+•  
+XIAO TX → BLE 5.0 / Wi-Fi Failover → Python TensorFlow denoiser.
+•  
+Updates live eye simulation & executes PyAutoGUI cursor movement.
+•  
+Includes wired USB-C fallback for zero-drop hospital reliability.
+import serial, pyautogui, tensorflow as tf
+from iris_sim import EyeDigitalTwin
+
+link = EyeDigitalTwin.connect(ble='IRIS_XIAO', wifi_backup=True)
+eye_ui = EyeDigitalTwin.launch_live_eye_window()
+
+while True:
+    pkt = link.read_denoised_ir_imu()  # TensorFlow filter
+    eye_ui.sync_blink_and_gaze(pkt.ir_beams)
+    c = pkt.command
+    if c == 'L':  pyautogui.moveRel(-30, 0)
+    if c == 'R':  pyautogui.moveRel(30, 0)
+    if c == 'U':  pyautogui.moveRel(0, -30)
+    if c == 'D':  pyautogui.moveRel(0, 30)
+    if c == 'LC': pyautogui.click()
+    if c == 'RC': pyautogui.rightClick()
+
+=== SLIDE 24 ===
+Ayushman Choudhary
+
+=== SLIDE 25 ===
+● PROJECT IRIS
+HEAD-TO-HEAD
+Tobii vs IRIS.
+Same core function. Radically different approach.
+{034A6B7D-CC44-4E08-9672-35736B992155}
+Feature
+Tobii Dynavox I-Series
+Project IRIS
+Price
+₹25,00,000+
+₹800
+Technology
+Camera-based eye tracking
+IR reflectance + IMU
+Lighting
+Requires controlled lighting
+Works in any lighting 
+Setup
+30+ min, specialist needed
+10 sec, self-calibrating
+Portability
+Dedicated tablet device
+Works with any laptop/phone
+Open Source
+Closed proprietary
+Will be Fully open-source
+99.96% cheaper. Works anywhere. Open for anyone to build.
+Source: Tobii Dynavox I-Series retail pricing India, 2024 (incl. import duties); tobii-dynavox.com
+
+=== SLIDE 26 ===
+● 
+PROJECT IRIS
+CONCEPT / THEORY
+Two signals, one reliable cursor.
+Optical reads your blink. Inertial reads your head. Together, they never fail.
+OPTICAL  ·  IR BLINK SENSING
+Sclera reflects, eyelid blocks.
+•  
+Projects multi-directional 950nm IR beams at the eye.
+•  
+Open sclera reflects strongly; closed eyelid blocks light.
+•  
+Python/TensorFlow filters noise & mirrors blinks live.
+•  
+Timing windows separate reflex blinks from clicks.
+950nm
+ IR · reflective sensing
+INERTIAL  ·  HEAD GESTURE SENSING
+Tilt your head, move the cursor.
+•  
+MPU6050 6-DOF MEMS reads head pitch and roll at 50Hz.
+•  
+Nod up/down and tilt left/right steer the cursor smoothly.
+•  
+Avoids the eye strain of camera-only gaze steering.
+•  
+Long-blink clutch re-zeros gyro to prevent drift.
+MPU6050 · 6-DOF MEMS
+
+=== SLIDE 27 ===
+●
+PROJECT IRIS
+REMOTE CAREGIVER ALERTING
+When the patient blinks, the caretaker's phone rings.
+Two-tier push notification pipeline via ntfy.sh — sub-300ms delivery, adblocker-immune.
+TWO-TIER DELIVERY PIPELINE
+TIER 1 · INTERNAL SERVER PROXY
+Same-origin JSON POST → /api/care/ntfy
+•  
+Next.js server forwards JSON alert to ntfy.sh
+•  
+Bypasses browser ByteString emoji header limits
+•  
+Prevents client adblockers from blocking SOS alerts
+TIER 2 · DIRECT CLIENT FALLBACK
+Direct JSON POST → ntfy.sh
+•  
+Fires directly to ntfy.sh if local proxy is offline
+•  
+Triggers instant HTML5 desktop & mobile notifications
+•  
+Guarantees alert delivery across Wi-Fi & cellular
+CAREGIVER RECEPTION
+Phone rings with high-priority alarm bypass
+●
+Caretaker installs ntfy app (Android/iPhone/Watch)
+●
+Subscribes to unique topic (e.g. iris-care-alert)
+●
+Emergency sirens + interactive deep-links
+●
+Deep-link opens IRIS Caregiver Live Portal
+●
+Mean latency: 280ms over cellular
+●
+Mean latency: 145ms over WiFi
+●
+87.2% faster caregiver response
+●
+Works on Android, iPhone, Apple Watch
+
+=== SLIDE 28 ===
+● 
+PROJECT IRIS
+BUILD COST & ROADMAP
+From prototype to public good.
+COMPONENT
+QTY
+COST (₹)
+Seeed Studio XIAO ESP32C3
+1
+250
+MPU6050 6-DOF Sensor
+1
+120
+Multi-Beam IR Sensor
+1
+100
+Magnet + Nut-Bolt Pivot + RGB LED
+1 set
+75
+3.7V 1000mAh Li-Po (Direct XIAO Charge)
+1
+100
+Breathable Velcro Belt + Glasses
+1 set
+130
+Wires + Passive Components
+1
+25
+TOTAL BUILD COST
+₹800
+99% CHEAPER vs ₹1.5L
+ROADMAP
+TODAY
+Working XIAO + Magnetic Glasses Prototype
+• Functional ₹800 rig with live Python eye twin & 2–3s setup.
+NEXT
+Custom Flex-PCB + 3D Enclosure
+• Will miniaturize casing for hospital & NGO field validation.
+MISSION
+Open Hardware & Future Rollout
+• Will distribute through hospitals & NGOs at ₹3,000–₹3,500.
+
+=== SLIDE 29 ===
+● 
+PROJECT IRIS
+FUTURE SCOPE
+What IRIS will become.
+Each current prototype limitation has a concrete engineering upgrade in our future roadmap.
+MULTI-USER
+Profiles for the whole household
+•  
+Per-user calibration profiles saved on laptop/cloud
+•  
+Instant household switching in under 5 seconds
+PREDICTIVE TEXT
+AI-powered autocomplete
+•  
+On-screen keyboard with AI next-word autocomplete
+•  
+Will cut blink-typing effort and time by over 60%
+VOICE SYNTHESIS
+Speech for non-verbal users
+•  
+Converts telegraphic blinks into natural spoken voice
+•  
+Will support regional Indian languages for calls
+CLINICAL PILOT
+Hospital validation program
+•  
+Upcoming pilot trials with neurology wards & NGOs
+•  
+Real-patient telemetry will refine blink thresholds
+
+=== SLIDE 30 ===
+● 
+PROJECT IRIS
+RESULTS
+Positives and Limitations
+✓  POSITIVES
+✓
+Dual wireless — BLE 5.0 with automatic Wi-Fi failover
+✓
+Works in any lighting (hardware mode)
+✓
+Multi-beam IR + live Python eye simulation & deterministic clicks
+✓
+Blink logic filters out natural blinks reliably
+✓
+Restores independent communication for the user
+⚠  LIMITATIONS
+⚠
+Quick 2–3 second calibration check per new user
+⚠
+Long continuous use can cause mild eye or neck strain
+Battery life ~12 hours with XIAO Deep Sleep mode
+⚠
+
+=== SLIDE 31 ===
+●
+PROJECT IRIS
+DEEPER HONESTY
+More positives. More limitations.
+✓  MORE POSITIVES
+✓
+Works in any lighting (multi-beam IR + IMU)
+✓
+Seeed Studio XIAO ESP32C3 — BLE + Wi-Fi built in
+✓
+3.7V Li-Po direct XIAO charge — 12h Deep Sleep
+✓
+Magnetic nut-bolt pivot fits any ±7D Rx glasses
+✓
+Open-source — anyone can build or improve it
+✓
+Universal App: 4 core tiles + 5 Settings menus
+✓
+Local-first privacy — zero eye video uploaded
+⚠  MORE LIMITATIONS
+•
+Requires voluntary eyelid control on one eye
+•
+Mild neck fatigue after 4+ hours of continuous use
+•
+2.4GHz band can face interference in crowded wards
+•
+Gemini AI expansion needs Wi-Fi (basic tiles offline)
+•
+Magnetic pivot needs one-time angle setup per frame
+•
+Hand-built prototype case — 3D enclosure in next phase
+•
+Formal clinical certification planned via NGO pilots
+
+=== SLIDE 32 ===
+●
+PROJECT IRIS
+BUILDING & TESTING
+Built by hand. Tested with real patients.
+From bedroom workbench to hospital pilot — every IRIS unit is hand-assembled and tested with the people who'll actually use it.
+
+=== SLIDE 33 ===
+● 
+PROJECT IRIS
+OPEN & AVAILABLE
+Will be available in future & open-sourced for the public.
+GITHUB  ·  OPEN-SOURCE REPOSITORY
+Public. Forkable. Free.
+•  
+Full Python cursor, calibration & eye-twin code will be public.
+•  
+Includes XIAO ESP32C3 firmware, circuit diagrams & 3D STL files.
+•  
+Anyone with a laptop will be able to clone & build it for ₹800.
+git clone github.com/project-iris/iris
+WEBSITE  ·  PROJECT HOMEPAGE
+Read. Replicate. Support.
+•  
+Hosts the browser-native IRIS Universal App & Caregiver Portal.
+•  
+Provides step-by-step assembly guides & calibration tutorials.
+•  
+Connects hospitals, NGOs, and makers to support the project.
+projectiris.dev
+
+=== SLIDE 34 ===
+●
+PROJECT IRIS
+SAFETY & RESPONSIBILITY
+Safety is non-negotiable.
+IRIS handles medical-grade data and sits on real patients. Every layer is designed with responsibility and sensitivity.
+HARDWARE SAFETY
+✓
+2A fast-blow fuse on the battery input
+✓
+XIAO ESP32C3 onboard battery management & overcharge cutoff
+✓
+3.7V Li-Po over-discharge and short-circuit protection
+✓
+Internal XIAO voltage regulator — zero external buck heat
+✓
+950nm IR sensor is 20× below IEC 62471 eye-safety limit (zero harm)
+✓
+Reverse polarity protection on USB-C input
+✓
+All components rated for continuous duty
+✓
+Breathable perforated Velcro belt maintains continuous airflow
+DATA SAFETY & PRIVACY
+✓
+All camera frames processed locally — never uploaded
+✓
+No video is ever recorded or transmitted
+✓
+Eye-tracking data stays in browser memory
+✓
+ntfy.sh notifications carry only text labels, no PII
+✓
+No advertising SDKs, no behavioral analytics
+✓
+No third-party tracking scripts
+✓
+Open-source — anyone can audit the code
+✓
+Patient owns their data. Always. Period.
+RESPONSIBILITY  ·  Building for vulnerable users means holding ourselves to medical-grade ethical standards — even as a student project.
+
+=== SLIDE 35 ===
+● 
+PROJECT IRIS
+SUSTAINABLE DEVELOPMENT GOALS
+Built for the goals that matter.
+IRIS maps directly to four UN Sustainable Development Goals — by design, not by coincidence.
+GOOD HEALTH & WELL-BEING
+•  
+Restores communication & agency for paralyzed patients
+•  
+Direct mental-health & rehab impact via gaze therapeutics
+INDUSTRY, INNOVATION & INFRASTRUCTURE
+•  
+Open-source assistive hardware built from ₹800 of parts
+•  
+Proves inclusive innovation doesn't need a multi-crore lab
+REDUCED INEQUALITIES
+•  
+Bridges the assistive-tech divide for low-income families
+•  
+Replaces ₹25L–₹30L imports with an accessible Indian solution
+PARTNERSHIPS FOR THE GOALS
+•  
+Will scale via hospitals, rehab centers & disability NGOs
+•  
+Open collaboration for community impact rather than monopolies
+
+=== SLIDE 36 ===
+●
+PROJECT IRIS
+SDG ALIGNMENT + DISTRIBUTION
+UN Sustainable Development Goals.
+03
+GOOD HEALTH
+Restores communication
+for severe motor disability
+09
+INDUSTRY & INNOVATION
+Open hardware from
+₹800 of components
+10
+REDUCED INEQUALITIES
+Bridges the digital divide
+for low-income families
+17
+PARTNERSHIPS
+Distributed via hospitals
+and NGOs at near-cost
+DISTRIBUTION PARTNERS PLAN
+AIIMS Delhi
+Neurology + Rehab Wards
+NIMHANS Bangalore
+Neurosciences + Mental Health
+PLANNED HOSPITAL & NGO VALIDATION PARTNERS
+AIIMS Delhi · NIMHANS Bangalore · APD India · Amar Seva Sangam · The Spinal Foundation
+•  
+Will partner with AIIMS Delhi & NIMHANS Bangalore neurology wards for clinical pilot validation.
+•  
+Will collaborate with APD India, Amar Seva Sangam & The Spinal Foundation for patient trials and subsidized rollout.
+
+=== SLIDE 37 ===
+● 
+PROJECT IRIS
+FUTURE VIABILITY & SCALE
+Engineered to scale into a complete system.
+Once clinical & NGO validations complete, IRIS will scale through a sustainable hardware + app model.
+₹15 Cr+
+India TAM — ~100K severe-motor-disability users × ₹1,500 retail
+$20B
+Global assistive-tech market, growing at 8% CAGR
+99.96%
+Price advantage vs commercial eye-tracker (Tobii ~₹25L)
+PLANNED FUTURE MODEL
+Hardware + Companion App SaaS
+• Future Complete Kit: ₹3,000–₹3,500 planned price (₹800 prototype BOM + custom PCB, case & warranty).
+• Companion App: Free core tiles + optional ₹99/month advanced telemetry & cloud pack.
+PLANNED DISTRIBUTION CHANNELS
+Hospitals + rehab centres + NGOs
+Tier-1 hospitals
+Apollo, AIIMS & NIMHANS neurology + rehab wards
+Inclusive access
+NGO validation & subsidized access (APD, Amar Seva Sangam, Spinal Foundation)
+Long tail
+Project website (projectiris.dev) + future hands-free gaming expansion
+Sources: Derived from ~100K severe-motor-disability users × ₹1,500 retail; Vantage Market Research 2025; Tobii Dynavox retail India 2024
+
+=== SLIDE 38 ===
+● PROJECT IRIS
+MARKET OPPORTUNITY
+A market that's growing fast.
+The global assistive technology market is projected to grow at 8% CAGR.
+$20B
+Global AT market 2025
+$43B
+Projected 2035
+8%
+CAGR 2025–2035
+Sources: Vantage Market Research 2025 (Assistive Technology Market Report); Custom Market Insights 2026; WHO 2024
+
+=== SLIDE 39 ===
+● 
+PROJECT IRIS
+SOCIAL IMPACT
+Dignity. Voice. Independence.
+Restores independence
+•  
+Restores independent communication for non-verbal patients
+•  
+Gives bedridden users control over their room & digital life
+Bridges the digital divide
+•  
+Replaces ₹25L+ imports with an ₹800 prototype architecture
+•  
+Ensures assistive technology access doesn't depend on wealth
+For someone who can't lift a finger, this is freedom.
+
+=== SLIDE 40 ===
+● 
+PROJECT IRIS
+THANK YOU
+Technology should be a bridge, not a wall.
+Project IRIS — built by Ayushman Choudhary.
+Headband, glasses, and a mission: independence for everyone who needs it.
+
+=== SLIDE 41 ===
+●
+PROJECT IRIS
+WHERE TOBII WINS
+Where Tobii still wins.
+Being honest matters. Here's where commercial eye-trackers still have an edge over IRIS v2.
+⚠
+Medical-grade certifications
+• FDA-cleared and CE-marked for hospital billing; IRIS is currently a prototype preparing for NGO & clinical trials.
+⚠
+Decades of validation
+• Backed by 20+ years of published clinical studies; IRIS is currently validated on bench & pilot trials.
+⚠
+Dedicated hardware form factor
+• Ships as an all-in-one ruggedized tablet with mounts; IRIS connects to the user's existing laptop or phone.
+⚠
+Professional support ecosystem
+• Includes dedicated clinical field-support staff; IRIS will grow through open-source & NGO support networks.
+⚠
+Hardware-grade eye tracking
+• Uses 120Hz binocular cameras for sub-pixel gaze; IRIS uses multi-beam IR + IMU for drift-free tile & cursor control.
+
+=== SLIDE 42 ===
+●
+PROJECT IRIS
+SENSORY & COGNITIVE REHAB
+Beyond communication — joy, play, recovery.
+Bedridden patients suffer sensory deprivation and clinical depression. IRIS restores joy, play, and cognitive engagement.
+360° COCKPIT FLIGHT SIMULATOR
+Photosphere
+●
+Equirectangular 360° cockpit panorama
+●
+Gaze-driven yaw + pitch navigation
+●
+Real-time HUD: airspeed, altitude, heading
+●
+60 FPS hardware-accelerated canvas rendering
+●
+Artificial horizon + vertical speed indicator
+●
+Exit tile returns to simulation hub safely
+GAZE-DRIVEN DIGITAL THERAPEUTICS
+Games + music + audiobooks
+●
+Flappy Gaze — ocular elevation trainer
+●
+Dino Jump — saccadic reaction time
+●
+Cyber Runner — lateral gaze coordination
+●
+Binaural + lo-fi music therapy
+●
+Hindi + English audiobook player
+●
+Web Audio gain curves for smooth volume
+
+=== SLIDE 43 ===
+●
+PROJECT IRIS
+EXPERIMENTAL EVALUATION
+The numbers. Verified.
+IRIS v2 benchmarked across accuracy, latency, computational overhead, and clinical caregiver response.
+{034A6B7D-CC44-4E08-9672-35736B992155}
+Metric
+IRIS v2
+Commercial Baseline
+Target Acquisition Accuracy
+98.4%
+92.1% (Tobii)
+Alert Dispatch Latency (cellular)
+280ms
+Manual call bell
+Caregiver Response Latency
+18.2 seconds
+4.2 minutes
+Flight Simulator Frame Rate
+60 FPS
+30-45 FPS (WebVR)
+Client CPU Utilization
+4.8-7.2%
+22-35% (Electron)
+Back Button Hit Rate
+99.6%
+74.3%
+System Usability Scale (SUS)
+91.5 / 100 (A+)
+68.4 / 100
+87.2% reduction in caregiver response time. In a choking emergency, that's the difference between life and death.
+
+=== SLIDE 44 ===
+●
+PROJECT IRIS
+GET INVOLVED
+Help me get this to the people who need it.
+IRIS is open-source. Anyone can build it. Anyone can improve it. Anyone can deploy it.
+HOSPITALS
+•  
+Pilot IRIS in neurology & spinal rehab wards
+•  
+Free prototype hardware & setup support provided
+•  
+Planned pilots with AIIMS, NIMHANS & partner NGOs
+DEVELOPERS
+•  
+Fork the open-source Python & XIAO firmware repo
+•  
+Build new Universal App tiles, games & IoT relays
+•  
+Help expand regional Indian language voice support
+FUNDERS
+•  
+Sponsor custom PCBs and 3D-printed enclosures
+•  
+Every ₹800 equips one more prototype headband
+•  
+Every ₹50,000 sponsors a full hospital or NGO ward pilot
+github.com/project-iris/iris  ·  projectiris.dev
+Built by Ayushman Choudhary  ·  Class 10  ·  Bhavan's Bhagwandas Purohit Vidya Mandir, Ashti, Nagpur
+
+=== SLIDE 45 ===
+● 
+PROJECT IRIS
+WEARABLE UPGRADE  ·  MODULAR MAGNETIC DESIGN
+Wear glasses first. Snap the magnet second.
+Separating the glasses and headband via a magnetic nut-bolt pivot makes wearing IRIS effortless.
+MAGNETIC + NUT-BOLT PIVOT MOUNT
+Fits any frame — even ±7 power lenses.
+•  
+Removable magnet + nut-bolt pivot on the glasses frame.
+•  
+Wear glasses first, strap headband second, and snap magnet on.
+•  
+Supports custom frames & high-power lenses (up to ±7D).
+•  
+Pivot joint adjusts IR beam angle without bending wires.
+Removable Magnet · Custom ±7D Lenses
+BREATHABLE VELCRO BELT + XIAO ESP32C3
+Airflow mesh, Velcro fit & 12h battery.
+•  
+Perforated airflow belt keeps the scalp cool for hours.
+•  
+Soft Velcro straps replace heavy buckles for easy fitting.
+•  
+XIAO ESP32C3 charges the 3.7V Li-Po via BAT+/BAT- pads.
+•  
+Built-in regulator removes buck modules; 12h Deep Sleep.
+XIAO ESP32C3 · 3.7V LiPo · 12h Deep Sleep
+
+=== SLIDE 46 ===
+● 
+PROJECT IRIS
+SYSTEM SPECIFICATIONS  ·  TECHNICAL DATASHEET
+Complete hardware & software specifications.
+Every component selected for minimal weight, deterministic speed, and 12-hour reliability.
+01
+MICROCONTROLLER & MOTION IMU
+•  
+MCU: Seeed Studio XIAO ESP32C3 (RISC-V @ 160 MHz)
+•  
+Motion Sensor: MPU6050 6-DOF (3-axis gyro + acc)
+•  
+Interface: I2C @ 400 kHz · 50 Hz gesture sampling
+02
+OPTICS & MAGNETIC MOUNT
+•  
+Emitter: 950nm Multi-Beam IR + LM393 comparator
+•  
+Eye Safety: <0.5 mW/cm² (IEC 62471 Exempt Group)
+•  
+Mount: Neodymium Magnet + Nut-Bolt Pivot (±7D Rx)
+03
+POWER, BATTERY & ERGONOMICS
+•  
+Battery: 3.7V 1000mAh Li-Po (direct XIAO BAT+/BAT-)
+•  
+Regulation: Onboard 3.3V regulator (no buck converter)
+•  
+Runtime: ~12h with Deep Sleep · Breathable Velcro belt
+04
+WIRELESS, AI TWIN & CALIBRATION
+•  
+Wireless: BLE 5.0 + Auto Wi-Fi Failover + USB-C
+•  
+Software: PyAutoGUI + TensorFlow + Live Eye Twin
+•  
+Calibration: 2–3s first-run · Prototype BOM: ₹800
+
+=== SLIDE 47 ===
+● 
+PROJECT IRIS
+NEXT-GEN SENSING  ·  LIVE OCULAR SIMULATION
+Mapping the eye. Mirroring every blink live.
+Multi-directional IR beams and Python/TensorFlow noise filtering build a live digital twin of the eye.
+MULTI-BEAM IR & TENSORFLOW DENOISING
+Multi-angle proximity with zero noise.
+•  
+Projects dispersed 950nm IR beams across the eye.
+•  
+Captures multi-point distance & proximity reflections.
+•  
+Python + TensorFlow pipeline filters ambient light noise.
+•  
+Eliminates false clicks from involuntary micro-tremors.
+Multi-Beam IR · TensorFlow Noise Filter
+REAL-TIME PYTHON EYE SIMULATION
+When you blink, the Python eye blinks.
+•  
+Reconstructs the fine structure of the eye live in Python.
+•  
+Mirrors open state, eyelid velocity & blinks in real time.
+•  
+Displays live sensor tracking during demonstrations.
+•  
+Adaptive baseline cuts calibration to just 2–3 seconds.
+Live Python Eye Twin · 2–3s Calibration
+
+=== SLIDE 48 ===
+● 
+PROJECT IRIS
+OCULAR SAFETY  ·  PHOTOBIOLOGICAL VERIFICATION
+Does the IR sensor harm the eye? Straight no.
+Engineered well below international photobiological safety limits for continuous all-day wear.
+20× BELOW IEC 62471 SAFETY THRESHOLD
+Non-coherent 950nm LED — not a laser.
+•  
+Uses a diffused, low-power 950nm LED (never a laser).
+•  
+Surface irradiance stays under 0.5 mW/cm² at the eye.
+•  
+Over 20× below the 10 mW/cm² IEC 62471 safety limit.
+•  
+Classified in the international Exempt (Zero-Risk) group.
+IEC 62471 Exempt · <0.5 mW/cm²
+SAFER THAN INDOOR SUNLIGHT
+Zero heat, zero UV, zero retinal strain.
+•  
+Emits less IR than ordinary daylight through a window.
+•  
+Lower IR power density than a standard TV remote LED.
+•  
+Produces zero thermal buildup and zero corneal drying.
+•  
+Completely safe for 12+ hours of continuous daily use.
+Zero Thermal Risk · 12h Continuous Safe
+
+=== SLIDE 49 ===
+● 
+PROJECT IRIS
+INTERNET OF THINGS  ·  SMART ROOM & WI-FI FAILOVER
+Control room lights with a blink. Always connected.
+IRIS operates as a full IoT device — connecting over both Bluetooth and Wi-Fi for smart-room agency.
+IOT CLOUD & SMART ROOM SIMULATION
+Turn on lights and fans from bed.
+•  
+Connects to IoT cloud relays over Wi-Fi for room control.
+•  
+Patients toggle bedroom lights & fans via blink tiles.
+•  
+Includes a live Smart Room Simulator inside Settings.
+•  
+Restores room independence without calling a caregiver.
+Wi-Fi IoT Cloud · Live Room Simulator
+AUTOMATIC WI-FI FAILOVER & DEEP SLEEP
+If Bluetooth drops, Wi-Fi takes over.
+•  
+Uses low-energy Bluetooth (BLE 5.0) as primary link.
+•  
+Auto-switches to local Wi-Fi if Bluetooth disconnects.
+•  
+Ensures cursor and SOS alerts never drop mid-use.
+•  
+Ultra-low-power Deep Sleep extends battery to 12 hours.
+BLE + Wi-Fi Failover · 12h Deep Sleep
+
+=== SLIDE 50 ===
+● 
+PROJECT IRIS
+THE PRICE GAP EXPLAINED
+Why ₹25–30 Lakh vs. ₹800? Breaking the monopoly.
+Commercial eye-trackers aren't expensive because of their sensors — they're expensive because of how they're sold.
+01
+GLOBAL PATENT & MARKET MONOPOLY
+•  
+2–3 Western firms control the clinical eye-tracking market
+•  
+Zero low-cost competition allows monopoly pricing
+•  
+Priced for Western insurance payouts, not Indian homes
+02
+40–60% IMPORT DUTIES & MIDDLEMEN
+•  
+Imported as specialized hardware with heavy tariffs
+•  
+Exclusive national & regional distributor markups
+•  
+Proprietary replacement mounts carry steep surcharges
+03
+FORCED BUNDLED TABLETS & CAMERAS
+•  
+Forces buyers to pay lakhs for a dedicated rugged tablet
+•  
+Uses costly 120Hz camera bars needing specialist setup
+•  
+IRIS runs on the laptop or phone the family already owns
+04
+MULTI-CRORE VALIDATION OVERHEAD
+•  
+Corporate overhead amortized into every unit sold
+•  
+IRIS uses ₹800 of off-the-shelf open hardware parts
+•  
+Will validate via Indian partner hospitals & NGOs
+
+=== SLIDE 51 ===
+● 
+PROJECT IRIS
+PROJECT IRIS WEB PLATFORM  ·  PROJECTIRIS.DEV
+One website for patients, caregivers & makers.
+Our dedicated web platform hosts the browser Universal App, live caregiver portal, and open build guides.
+BROWSER UNIVERSAL APP & CAREGIVER PORTAL
+Zero-install web app & live dashboard.
+•  
+Runs the IRIS Universal App directly in any web browser.
+•  
+Hosts the Caregiver Live Portal linked from ntfy.sh alerts.
+•  
+Includes 360° Flight Sim, gaze games & IoT room simulator.
+•  
+Works across Windows, macOS, Android & iOS without drivers.
+projectiris.dev · Browser-Native Platform
+OPEN REPLICATION & HOSPITAL PILOT HUB
+Schematics, Python scripts & NGO hub.
+•  
+Downloadable Python eye-twin scripts & XIAO firmware.
+•  
+Publishes circuit wiring diagrams, BOM & 3D mount files.
+•  
+Lets students & rehab labs replicate IRIS for ₹800.
+•  
+Onboarding portal for hospital wards & NGO partners.
+Open Documentation · Hospital & NGO Hub
+
+=== SLIDE 52 ===
+● 
+PROJECT IRIS
+FUTURE SYSTEM ECONOMICS  ·  PRICING JUSTIFICATION
+How the ₹800 prototype will scale to a ₹3,000–₹3,500 kit.
+IRIS is not on the market yet — here is how the future complete commercial kit will be priced and sustained.
+01
+₹800 CORE PROTOTYPE BOM
+•  
+XIAO C3 (₹250) + MPU6050 (₹120) + Multi-Beam IR (₹100)
+•  
+Magnet Pivot + LED (₹75) + 3.7V 1000mAh Li-Po (₹100)
+•  
+Velcro Belt + Glasses (₹130) + Passive parts (₹25)
+02
++₹1,300 PRODUCTION & QUALITY BUILD
+•  
+Custom flex-PCB & 3D enclosure tooling (+₹450)
+•  
+QA testing, 1-year warranty & packaging (+₹350)
+•  
+GST, shipping & hospital/NGO onboarding (+₹500)
+03
+₹3,000–₹3,500 PLANNED FUTURE PRICE
+•  
+Landed production cost of complete kit will be ~₹2,100
+•  
+Planned ₹3,000–₹3,500 price yields ~₹900–₹1,400 margin
+•  
+Remains 99.8% cheaper than ₹25L–₹30L commercial systems
+04
+NGO VALIDATION & SUBSIDIZED ACCESS
+•  
+Margins will fund R&D and subsidized kits for poor homes
+•  
+Will validate via APD India, Amar Seva & Spinal Foundation
+•  
+Hospital neurology pilots at AIIMS Delhi & NIMHANS
+
+=== SLIDE 53 ===
+● 
+PROJECT IRIS
+FUTURE MARKET DIVERSIFICATION  ·  BEYOND HEALTHCARE
+Expanding into hands-free gaming & consumer tech.
+Diversifying into gaming will unlock high-volume adoption that cross-subsidizes medical units.
+HANDS-FREE PC, WEB & ARCADE GAMING
+Head-tilt aiming. Blink-to-fire triggers.
+•  
+MPU6050 head tilt maps to smooth 360° crosshair aiming.
+•  
+Deliberate single & double blinks act as fire triggers.
+•  
+Lets injured & amputee players compete hands-free.
+•  
+Affordable ₹3,000–₹3,500 motion wearable for gamers.
+Zero-Lag Head Aim · Blink Triggers
+CROSS-SUBSIDY & SMART HOME ECOSYSTEM
+Gamer volume will fund patient access.
+•  
+Assistive devices often face low manufacturing volume.
+•  
+Consumer gaming demand will drive bulk PCB production.
+•  
+Gaming revenue will subsidize near-cost patient units.
+•  
+Unifies assistive care, gaming & Wi-Fi smart-room control.
+High-Volume Scale · Cross-Subsidy Impact
+

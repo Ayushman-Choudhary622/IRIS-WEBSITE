@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <rect width="160" height="160" fill="#4C9F38" rx="8"/>
+  <text x="14" y="32" font-family="-apple-system, sans-serif" font-size="24" font-weight="900" fill="#ffffff">3</text>
+  <text x="36" y="22" font-family="-apple-system, sans-serif" font-size="9" font-weight="800" fill="#ffffff" letter-spacing="0.5">GOOD HEALTH</text>
+  <text x="36" y="33" font-family="-apple-system, sans-serif" font-size="9" font-weight="800" fill="#ffffff" letter-spacing="0.5">AND WELL-BEING</text>
+  <!-- ECG Heart Icon -->
+  <g transform="translate(30, 48) scale(1)">
+    <path d="M50,15 C42,2 25,5 18,17 C10,32 28,52 50,75 C72,52 90,32 82,17 C75,5 58,2 50,15 Z" fill="#ffffff" opacity="0.95"/>
+    <path d="M12,48 L32,48 L39,32 L47,62 L55,40 L61,54 L68,48 L88,48" fill="none" stroke="#4C9F38" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
